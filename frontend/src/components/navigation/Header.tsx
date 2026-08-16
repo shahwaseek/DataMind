@@ -13,6 +13,7 @@ interface HeaderProps {
   backendHealthy: boolean;
   loadingBackend: boolean;
   onRefresh: () => void;
+  onOpenPalette: () => void;
 }
 
 export const Header: React.FC<HeaderProps> = ({
@@ -22,6 +23,7 @@ export const Header: React.FC<HeaderProps> = ({
   backendHealthy,
   loadingBackend,
   onRefresh,
+  onOpenPalette,
 }) => {
   return (
     <header className="fixed top-0 right-0 w-[calc(100%-240px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-10 flex justify-between items-center px-6 transition-all duration-200">
@@ -46,17 +48,19 @@ export const Header: React.FC<HeaderProps> = ({
 
       {/* Right Action Bar & Search */}
       <div className="flex items-center gap-4">
-        {/* Global Search Input */}
-        <div className="relative">
+        {/* Global Search Input triggering Command Palette */}
+        <button
+          onClick={onOpenPalette}
+          className="relative bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 text-left font-body text-sm text-on-surface-variant hover:border-primary hover:text-on-surface w-56 flex items-center justify-between transition-all"
+        >
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">
             search
           </span>
-          <input
-            type="text"
-            className="bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 font-body text-sm text-on-surface focus:outline-none focus:border-primary w-48 transition-all placeholder:text-on-surface-variant"
-            placeholder="Search..."
-          />
-        </div>
+          <span>Search or Ctrl+K...</span>
+          <kbd className="px-1.5 py-0.5 rounded bg-surface-container-lowest border border-micro font-code text-[10px]">
+            ⌘K
+          </kbd>
+        </button>
 
         {/* Telemetry Status Badge */}
         <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant text-xs font-semibold">

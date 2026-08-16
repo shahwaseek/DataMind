@@ -84,8 +84,9 @@ export const DatasetUpload: React.FC<DatasetUploadProps> = ({ projectId, onUploa
       </div>
 
       {error && (
-        <div className="bg-error-container/20 border-l-4 border-danger p-3 rounded text-danger text-sm mb-4">
-          ⚠️ {error}
+        <div className="bg-error-container/20 border-l-4 border-danger p-3 rounded text-danger text-sm mb-4 flex items-center gap-1.5">
+          <span className="material-symbols-outlined text-[18px]">warning</span>
+          <span>{error}</span>
         </div>
       )}
 

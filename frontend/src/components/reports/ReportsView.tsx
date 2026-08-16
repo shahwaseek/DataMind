@@ -5,45 +5,73 @@ interface ReportsViewProps {
 }
 
 export const ReportsView: React.FC<ReportsViewProps> = ({ projectId }) => {
-  const [reportMarkdown, setReportMarkdown] = useState<string | null>(null);
+  const [report, setReport] = useState<string | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
 
   const handleGenerateReport = async () => {
     setLoading(true);
+    setError(null);
     try {
       const res = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projectId}/reports/generate`);
-      if (res.ok) {
-        const json = await res.json();
-        setReportMarkdown(json.report_markdown);
+      if (!res.ok) {
+        throw new Error('Failed to generate report');
       }
+      const data = await res.json();
+      setReport(data.report_markdown);
     } catch (err) {
-      console.error('Failed to generate report:', err);
+      setError(err instanceof Error ? err.message : 'Unknown report generation error');
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      <div className="glass-panel" style={{ padding: '1.5rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+    <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full">
+      <div className="flex justify-between items-center border-b border-outline-variant pb-4">
         <div>
-          <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.25rem', fontSize: '1.2rem' }}>
-            📝 Executive Analytical Reports
-          </h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-            Generate a full evidence-backed markdown report summarizing datasets, quality scores, and analysis runs.
-          </p>
+          <h2 className="font-display text-2xl font-bold text-on-surface mb-1">Executive Reports Generator</h2>
+          <p className="font-body text-sm text-on-surface-variant">Compile evidence-backed executive markdown summaries for stakeholders.</p>
         </div>
         <button className="btn-primary" onClick={handleGenerateReport} disabled={loading}>
-          {loading ? 'Generating...' : '⚡ Generate Report'}
+          <span className="material-symbols-outlined text-[18px]">description</span>
+          {loading ? 'Generating...' : 'Generate Executive Report'}
         </button>
       </div>
 
-      {reportMarkdown && (
-        <div className="glass-panel" style={{ padding: '2rem' }}>
-          <pre style={{ whiteSpace: 'pre-wrap', fontFamily: 'var(--font-mono)', fontSize: '0.9rem', color: 'var(--text-primary)', lineHeight: '1.6' }}>
-            {reportMarkdown}
+      {error && (
+        <div className="bg-error-container/20 border-l-4 border-danger p-4 rounded text-danger text-sm flex items-center gap-2">
+          <span className="material-symbols-outlined text-[18px]">warning</span>
+          <span>{error}</span>
+        </div>
+      )}
+
+      {report ? (
+        <div className="bg-surface-container border border-outline-variant p-8 rounded-lg">
+          <div className="flex justify-between items-center mb-6 border-b border-micro pb-4">
+            <span className="px-2.5 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+              EXECUTIVE REPORT GENERATED
+            </span>
+            <button
+              className="btn-secondary text-xs"
+              onClick={() => navigator.clipboard.writeText(report)}
+            >
+              Copy Markdown
+            </button>
+          </div>
+          <pre className="font-code text-sm text-on-surface whitespace-pre-wrap leading-relaxed">
+            {report}
           </pre>
+        </div>
+      ) : (
+        <div className="bg-surface-container border border-outline-variant p-12 rounded-lg text-center">
+          <div className="w-12 h-12 rounded-full bg-primary/10 text-primary flex items-center justify-center mx-auto mb-3">
+            <span className="material-symbols-outlined text-2xl">description</span>
+          </div>
+          <h3 className="font-display font-semibold text-on-surface text-base mb-1">No Report Generated Yet</h3>
+          <p className="font-body text-xs text-on-surface-variant max-w-sm mx-auto mb-4">
+            Click 'Generate Executive Report' above to synthesize dataset metadata, profile metrics, and AI analysis findings into a structured summary.
+          </p>
         </div>
       )}
     </div>

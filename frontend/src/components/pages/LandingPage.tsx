@@ -1,3 +1,4 @@
+import React from 'react';
 import { IconBrain } from '../ui/Icons';
 
 interface LandingPageProps {
@@ -156,8 +157,9 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryDataMind, onLogin
               <h3 style={{ fontSize: '1.1rem', color: '#F5F7FA', marginBottom: '0.35rem' }}>
                 Q: "Why did revenue decline in Q2?"
               </h3>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem' }}>
-                💡 DataMind identified West region hardware sales drop as primary factor.
+              <p style={{ color: '#94a3b8', fontSize: '0.9rem' }} className="flex items-center gap-1">
+                <span className="material-symbols-outlined text-primary text-[16px]">lightbulb</span>
+                <span>DataMind identified West region hardware sales drop as primary factor.</span>
               </p>
             </div>
 

@@ -178,8 +178,9 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
 
       {/* Error Alert */}
       {error && (
-        <div className="w-full bg-error-container/20 border-l-4 border-danger p-4 rounded text-danger mb-6">
-          ⚠️ {error}
+        <div className="w-full bg-error-container/20 border-l-4 border-danger p-4 rounded text-danger mb-6 flex items-center gap-2">
+          <span className="material-symbols-outlined text-[18px]">warning</span>
+          <span>{error}</span>
         </div>
       )}
 
@@ -203,8 +204,9 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
             </div>
 
             <h3 className="text-xl font-bold text-on-surface mb-2">Q: "{currentAnalysis.question}"</h3>
-            <p className="text-on-surface-variant text-sm mb-4 leading-relaxed">
-              💡 <strong>AI Explanation:</strong> {currentAnalysis.explanation}
+            <p className="text-on-surface-variant text-sm mb-4 leading-relaxed flex items-start gap-1.5">
+              <span className="material-symbols-outlined text-primary text-[18px] mt-0.5">lightbulb</span>
+              <span><strong>AI Explanation:</strong> {currentAnalysis.explanation}</span>
             </p>
 
             {/* Validated DuckDB SQL Pane */}

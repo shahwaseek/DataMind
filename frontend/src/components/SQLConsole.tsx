@@ -1,150 +1,122 @@
 import React, { useState } from 'react';
 
+interface SQLQueryResult {
+  columns: string[];
+  rows: Record<string, any>[];
+  total_rows: number;
+  returned_rows: number;
+  execution_time_ms: number;
+  validation_status: string;
+}
+
 interface SQLConsoleProps {
   datasetId: string;
   datasetName: string;
 }
 
-interface QueryResult {
-  columns: string[];
-  rows: Record<string, any>[];
-  total_rows: number;
-  returned_rows: number;
-  is_truncated: boolean;
-  execution_time_ms: number;
-  sql_query: string;
-  validation_status: string;
-}
-
 export const SQLConsole: React.FC<SQLConsoleProps> = ({ datasetId, datasetName }) => {
-  const [sql, setSql] = useState<string>('SELECT * FROM dataset LIMIT 15');
-  const [result, setResult] = useState<QueryResult | null>(null);
+  const [query, setQuery] = useState<string>('SELECT * FROM dataset LIMIT 10;');
+  const [result, setResult] = useState<SQLQueryResult | null>(null);
   const [executing, setExecuting] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
 
-  const runQuery = async (queryToRun?: string) => {
-    const targetSql = queryToRun || sql;
-    if (!targetSql.trim()) return;
+  const handleExecute = async () => {
+    if (!query.trim()) return;
 
     setExecuting(true);
     setError(null);
+    setResult(null);
 
     try {
       const res = await fetch(`http://127.0.0.1:8000/api/v1/datasets/${datasetId}/query`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ sql_query: targetSql }),
+        body: JSON.stringify({ sql_query: query }),
       });
 
       if (!res.ok) {
-        const errorJson = await res.json();
-        throw new Error(errorJson.detail || 'Query execution failed');
+        const errJson = await res.json();
+        throw new Error(errJson.detail || 'SQL Query Execution Failed');
       }
 
-      const data: QueryResult = await res.json();
+      const data: SQLQueryResult = await res.json();
       setResult(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Unknown query error');
-      setResult(null);
+      setError(err instanceof Error ? err.message : 'SQL Query execution failed');
     } finally {
       setExecuting(false);
     }
   };
 
-  const handleTemplateClick = (templateSql: string) => {
-    setSql(templateSql);
-    runQuery(templateSql);
-  };
-
   return (
-    <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* SQL Editor Card */}
-      <div className="glass-card card">
-        <div className="card-header">
-          <h3 className="card-title">
-            <span className="card-icon">⚡</span> DuckDB Read-Only SQL Console
-          </h3>
-          <span className="status-badge" style={{ color: 'var(--accent-cyan)' }}>
-            Target: <code>dataset</code> ({datasetName})
-          </span>
-        </div>
+    <div className="glass-card card" style={{ borderLeft: '4px solid var(--accent-cyan)' }}>
+      <div className="card-header" style={{ marginBottom: '1rem' }}>
+        <h3 className="card-title">
+          <span className="material-symbols-outlined text-primary text-[20px]">terminal</span> DuckDB Read-Only SQL Console
+        </h3>
+        <span className="brand-badge" style={{ background: 'rgba(6, 182, 212, 0.15)', color: 'var(--accent-cyan)' }}>
+          Target: {datasetName} (table: dataset)
+        </span>
+      </div>
 
-        {/* Quick Query Templates */}
-        <div style={{ marginBottom: '1rem', display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)', display: 'flex', alignItems: 'center' }}>Quick Templates:</span>
-          <button
-            className="btn btn-secondary"
-            style={{ padding: '0.3rem 0.75rem', fontSize: '0.8rem' }}
-            onClick={() => handleTemplateClick('SELECT * FROM dataset LIMIT 20')}
-          >
-            SELECT All
-          </button>
-          <button
-            className="btn btn-secondary"
-            style={{ padding: '0.3rem 0.75rem', fontSize: '0.8rem' }}
-            onClick={() => handleTemplateClick('SELECT COUNT(*) AS total_records FROM dataset')}
-          >
-            COUNT Rows
-          </button>
-        </div>
+      {/* SQL Input Textarea */}
+      <div style={{ position: 'relative', marginBottom: '1rem' }}>
+        <textarea
+          className="form-input"
+          rows={4}
+          style={{
+            fontFamily: 'var(--font-mono)',
+            fontSize: '0.85rem',
+            background: 'var(--bg-darker)',
+            border: '1px solid var(--border-glow)',
+            color: 'var(--accent-light)',
+          }}
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="SELECT * FROM dataset WHERE ..."
+        />
 
-        {/* Query Input */}
-        <div style={{ position: 'relative' }}>
-          <textarea
-            className="form-input"
-            rows={4}
-            value={sql}
-            onChange={(e) => setSql(e.target.value)}
-            placeholder="Write read-only SQL (e.g. SELECT * FROM dataset)..."
-            style={{ width: '100%', fontFamily: 'var(--font-mono)', fontSize: '0.95rem', lineHeight: '1.5', resize: 'vertical' }}
-            disabled={executing}
-          />
-        </div>
-
-        {/* Action Button & Security Badge */}
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '1rem' }}>
-          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-            🔒 AST Parser Enforced: DDL/DML & external calls are blocked
-          </span>
-          <button className="btn btn-primary" onClick={() => runQuery()} disabled={executing}>
-            {executing ? 'Executing Query...' : '▶ Run SQL Query'}
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginTop: '0.5rem' }}>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+            🔒 AST Guard Enabled (DDL / DML & File Functions Blocked)
+          </div>
+          <button className="btn-primary" onClick={handleExecute} disabled={executing || !query.trim()}>
+            {executing ? 'Executing Query...' : 'Run SQL Query →'}
           </button>
         </div>
       </div>
 
-      {/* Error / Security Rejection Banner */}
+      {/* Error Output Pane */}
       {error && (
-        <div className="glass-card card" style={{ borderLeft: '4px solid #ef4444', background: 'rgba(239, 68, 68, 0.1)', color: '#f87171' }}>
-          <h4 style={{ marginBottom: '0.25rem' }}>⚠️ Query Rejected / Failed</h4>
-          <p style={{ fontSize: '0.9rem', fontFamily: 'var(--font-mono)' }}>{error}</p>
+        <div style={{ background: 'rgba(255, 107, 107, 0.15)', borderLeft: '4px solid var(--accent-danger)', padding: '1rem', borderRadius: '8px', color: 'var(--accent-danger)', marginBottom: '1rem' }}>
+          <h4 style={{ marginBottom: '0.25rem' }} className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-[18px]">warning</span>
+            <span>Query Rejected / Failed</span>
+          </h4>
+          <pre style={{ fontFamily: 'var(--font-mono)', fontSize: '0.8rem', whiteSpace: 'pre-wrap' }}>{error}</pre>
         </div>
       )}
 
-      {/* Query Result Card */}
+      {/* Query Execution Result */}
       {result && (
-        <div className="glass-card card">
-          <div className="card-header" style={{ marginBottom: '1rem' }}>
-            <h4 style={{ color: 'var(--text-primary)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <span style={{ color: 'var(--accent-green)' }}>✓</span> Execution Result Payload
-            </h4>
-            <div style={{ display: 'flex', gap: '0.75rem' }}>
-              <span className="status-badge" style={{ color: 'var(--accent-green)' }}>
-                {result.execution_time_ms} ms
-              </span>
-              <span className="status-badge" style={{ color: 'var(--accent-cyan)' }}>
-                {result.returned_rows} of {result.total_rows.toLocaleString()} rows
-              </span>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.75rem' }}>
+            <div style={{ display: 'flex', gap: '0.5rem' }}>
+              <span className="badge-pill badge-emerald">✓ STATUS: {result.validation_status}</span>
+              <span className="badge-pill badge-cyan">{result.returned_rows} rows returned</span>
+            </div>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
+              Latency: {result.execution_time_ms} ms
             </div>
           </div>
 
-          {/* Results Table */}
-          <div className="table-container">
+          <div style={{ overflowX: 'auto', maxHeight: '350px' }}>
             <table className="data-table">
               <thead>
                 <tr>
                   <th>#</th>
-                  {result.columns.map((col, cIdx) => (
-                    <th key={cIdx}>{col}</th>
+                  {result.columns.map((col, idx) => (
+                    <th key={idx}>{col}</th>
                   ))}
                 </tr>
               </thead>

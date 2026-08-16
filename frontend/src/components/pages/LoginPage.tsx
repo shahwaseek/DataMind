@@ -93,7 +93,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onBackToLanding
         </div>
 
         <button className="btn-secondary" style={{ width: '100%', justifyContent: 'center', padding: '0.65rem' }} onClick={onSuccess}>
-          <span>🔑</span> Continue with Google / SSO
+          <span className="material-symbols-outlined text-[18px]">vpn_key</span> Continue with Google / SSO
         </button>
 
         <div style={{ textAlign: 'center', marginTop: '1.5rem', fontSize: '0.85rem', color: '#94a3b8' }}>

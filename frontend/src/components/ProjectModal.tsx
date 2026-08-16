@@ -16,10 +16,7 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ isOpen, onClose, onP
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim()) {
-      setError('Project name is required');
-      return;
-    }
+    if (!name.trim()) return;
 
     setSubmitting(true);
     setError(null);
@@ -32,11 +29,12 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ isOpen, onClose, onP
       });
 
       if (!res.ok) {
-        throw new Error('Failed to create project');
+        const errJson = await res.json();
+        throw new Error(errJson.detail || 'Failed to create project');
       }
 
-      const data = await res.json();
-      onProjectCreated(data);
+      const newProj = await res.json();
+      onProjectCreated(newProj);
       setName('');
       setDescription('');
       onClose();
@@ -49,49 +47,72 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ isOpen, onClose, onP
 
   return (
     <div className="modal-backdrop" onClick={onClose}>
-      <div className="glass-card modal-content" onClick={(e) => e.stopPropagation()}>
-        <h2 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>Create New Analytics Workspace</h2>
-        
+      <div
+        className="glass-panel"
+        style={{
+          width: '100%',
+          maxWidth: '460px',
+          padding: '2rem',
+          border: '1px solid var(--border-glow)',
+          boxShadow: '0 0 40px rgba(140, 128, 255, 0.2)',
+        }}
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.25rem' }}>
+          <h3 style={{ color: 'var(--text-primary)', fontSize: '1.2rem', fontFamily: 'var(--font-display)', fontWeight: 700 }}>
+            Create New Workspace Project
+          </h3>
+          <button
+            onClick={onClose}
+            style={{ background: 'none', border: 'none', color: 'var(--text-muted)', fontSize: '1.2rem', cursor: 'pointer' }}
+          >
+            ✕
+          </button>
+        </div>
+
         {error && (
-          <div style={{ color: '#ef4444', fontSize: '0.85rem', marginBottom: '1rem' }}>
-            ⚠️ {error}
+          <div style={{ color: 'var(--accent-danger)', background: 'rgba(255, 107, 107, 0.1)', padding: '0.75rem', borderRadius: '6px', fontSize: '0.85rem', marginBottom: '1rem' }} className="flex items-center gap-1">
+            <span className="material-symbols-outlined text-[16px]">warning</span>
+            <span>{error}</span>
           </div>
         )}
 
-        <form onSubmit={handleSubmit}>
-          <div className="form-group">
-            <label htmlFor="projectName">Project Name</label>
+        <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+          <div>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
+              Project Name *
+            </label>
             <input
-              id="projectName"
               type="text"
               className="form-input"
-              placeholder="e.g. Sales Performance Q3"
+              placeholder="e.g. Q3 Sales & Hardware Analysis"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              required
               disabled={submitting}
-              autoFocus
             />
           </div>
 
-          <div className="form-group">
-            <label htmlFor="projectDesc">Description (Optional)</label>
+          <div>
+            <label style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'block', marginBottom: '0.35rem' }}>
+              Description (Optional)
+            </label>
             <textarea
-              id="projectDesc"
               className="form-input"
               rows={3}
-              placeholder="Analysis scope and dataset objectives..."
+              placeholder="Objective, analytical targets, or dataset notes..."
               value={description}
               onChange={(e) => setDescription(e.target.value)}
               disabled={submitting}
             />
           </div>
 
-          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '1.5rem' }}>
-            <button type="button" className="btn btn-secondary" onClick={onClose} disabled={submitting}>
+          <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
+            <button className="btn-secondary" type="button" onClick={onClose} disabled={submitting}>
               Cancel
             </button>
-            <button type="submit" className="btn btn-primary" disabled={submitting}>
-              {submitting ? 'Creating...' : 'Create Project'}
+            <button className="btn-primary" type="submit" disabled={submitting || !name.trim()}>
+              {submitting ? 'Creating...' : 'Create Project →'}
             </button>
           </div>
         </form>

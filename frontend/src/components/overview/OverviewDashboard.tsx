@@ -21,74 +21,49 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
   onNavigateToDatasets,
 }) => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.75rem' }}>
+    <div className="flex flex-col gap-6 max-w-5xl mx-auto w-full">
       {/* Hero Welcome Card */}
-      <div className="glass-panel" style={{ padding: '2rem', background: 'linear-gradient(135deg, rgba(20, 28, 39, 0.9), rgba(88, 69, 217, 0.2))' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.75rem', fontWeight: 800, color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-          Welcome to DataMind AI Analyst
+      <div className="bg-surface-container border border-outline-variant p-8 rounded-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl pointer-events-none" />
+        <h2 className="font-display text-3xl font-bold text-on-surface mb-2">
+          Local-First AI Analytical Instrument
         </h2>
-        <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', maxWidth: '650px', lineHeight: '1.6', marginBottom: '1.25rem' }}>
-          Understand your data without writing complex SQL queries. DataMind translates plain-English questions into verified, evidence-backed local analytics.
+        <p className="font-body text-sm text-on-surface-variant max-w-2xl leading-relaxed mb-6">
+          DataMind executes deterministic profiling, safe AST-validated DuckDB SQL queries, and evidence-backed AI analysis entirely on your local machine.
         </p>
 
-        <div style={{ display: 'flex', gap: '1rem' }}>
+        <div className="flex gap-4">
           <button className="btn-primary" onClick={onNavigateToAnalyst}>
-            🧠 Ask AI Analyst →
+            <span className="material-symbols-outlined text-[18px]">psychology</span> Start AI Analysis →
           </button>
           <button className="btn-secondary" onClick={onNavigateToDatasets}>
-            📁 Manage Datasets ({datasets.length})
+            <span className="material-symbols-outlined text-[18px]">folder</span> Manage Datasets ({datasets.length})
           </button>
         </div>
       </div>
 
-      {/* KPI Cards Grid */}
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))', gap: '1.25rem' }}>
-        <div className="glass-panel glass-panel-hover" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.25rem', fontWeight: 600 }}>
-            WORKSPACE DATASETS
-          </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, color: 'var(--text-primary)' }}>
-            {datasets.length}
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--accent-emerald)', marginTop: '0.35rem' }}>
-            ✓ Verified Local Storage
-          </div>
+      {/* Overview Stats Row */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+        <div className="bg-surface-container border border-outline-variant p-6 rounded-lg">
+          <div className="font-label text-xs text-on-surface-variant uppercase font-semibold mb-1">Active Project Datasets</div>
+          <div className="font-display text-3xl font-bold text-on-surface">{datasets.length}</div>
+          <div className="font-body text-xs text-on-surface-variant mt-1">Indexed in local SQLite / DuckDB</div>
         </div>
 
-        <div className="glass-panel glass-panel-hover" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.25rem', fontWeight: 600 }}>
-            ACTIVE DATASET
-          </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: 'var(--accent-light)', textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap' }}>
+        <div className="bg-surface-container border border-outline-variant p-6 rounded-lg">
+          <div className="font-label text-xs text-on-surface-variant uppercase font-semibold mb-1">Active Workspace Dataset</div>
+          <div className="font-display text-lg font-bold text-primary truncate">
             {selectedDataset ? selectedDataset.name : 'None selected'}
           </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
-            {selectedDataset ? `${selectedDataset.file_type.toUpperCase()} • ${(selectedDataset.file_size_bytes / 1024).toFixed(1)} KB` : 'Upload a file to start'}
+          <div className="font-body text-xs text-on-surface-variant mt-1">
+            {selectedDataset ? `${selectedDataset.file_type.toUpperCase()} format` : 'Upload a dataset to begin'}
           </div>
         </div>
 
-        <div className="glass-panel glass-panel-hover" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.25rem', fontWeight: 600 }}>
-            DATA QUALITY SCORE
-          </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 800, color: 'var(--accent-emerald)' }}>
-            94 <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/ 100</span>
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', marginTop: '0.35rem' }}>
-            ✓ 0 Outliers, High Integrity
-          </div>
-        </div>
-
-        <div className="glass-panel glass-panel-hover" style={{ padding: '1.25rem' }}>
-          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginBottom: '0.25rem', fontWeight: 600 }}>
-            SECURITY & SAFETY
-          </div>
-          <div style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>
-            Read-Only
-          </div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.35rem' }}>
-            AST SQL Guard Active
-          </div>
+        <div className="bg-surface-container border border-outline-variant p-6 rounded-lg">
+          <div className="font-label text-xs text-on-surface-variant uppercase font-semibold mb-1">Security & Execution Model</div>
+          <div className="font-display text-lg font-bold text-success">100% Read-Only Guard</div>
+          <div className="font-body text-xs text-on-surface-variant mt-1">DDL/DML & file access blocked</div>
         </div>
       </div>
     </div>

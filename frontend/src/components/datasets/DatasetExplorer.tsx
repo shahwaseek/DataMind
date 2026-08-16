@@ -36,36 +36,34 @@ export const DatasetExplorer: React.FC<DatasetExplorerProps> = ({
   const [activeTab, setActiveTab] = useState<'profile' | 'preview' | 'sql'>('profile');
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+    <div className="flex flex-col gap-6">
       {/* File Upload Zone */}
       <DatasetUpload projectId={projectId} onUploadSuccess={onUploadSuccess} />
 
       {/* Dataset Grid List */}
       {datasets.length > 0 && (
         <div>
-          <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', fontSize: '1.1rem' }}>
+          <h3 className="font-display font-semibold text-base text-on-surface mb-4">
             Workspace Datasets ({datasets.length})
           </h3>
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '1rem' }}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {datasets.map((ds) => {
               const isSelected = selectedDataset?.id === ds.id;
               return (
                 <div
                   key={ds.id}
-                  className="glass-panel glass-panel-hover"
-                  style={{
-                    padding: '1.25rem',
-                    cursor: 'pointer',
-                    borderColor: isSelected ? 'var(--accent-primary)' : 'var(--border-subtle)',
-                    background: isSelected ? 'rgba(140, 128, 255, 0.12)' : 'var(--surface-container)',
-                  }}
+                  className={`bg-surface-container border p-5 rounded-lg cursor-pointer transition-all ${
+                    isSelected ? 'border-primary bg-primary/10 hardware-glow' : 'border-outline-variant hover:border-primary/50 hover:bg-surface-container-high'
+                  }`}
                   onClick={() => onSelectDataset(ds)}
                 >
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                    <strong style={{ color: 'var(--text-primary)', fontSize: '0.95rem' }}>{ds.name}</strong>
-                    <span className="badge-pill badge-cyan" style={{ fontSize: '0.65rem' }}>{ds.file_type.toUpperCase()}</span>
+                  <div className="flex justify-between items-center mb-2">
+                    <strong className="font-display font-semibold text-on-surface text-sm">{ds.name}</strong>
+                    <span className="px-2 py-0.5 rounded bg-primary/20 text-primary font-code text-[10px] uppercase font-bold">
+                      {ds.file_type}
+                    </span>
                   </div>
-                  <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)', display: 'flex', flexDirection: 'column', gap: '0.35rem' }}>
+                  <div className="font-body text-xs text-on-surface-variant flex flex-col gap-1">
                     <div>Size: {(ds.file_size_bytes / 1024).toFixed(1)} KB</div>
                     {ds.latest_version && (
                       <div>Dimensions: {ds.latest_version.row_count} rows × {ds.latest_version.column_count} cols</div>
@@ -78,25 +76,40 @@ export const DatasetExplorer: React.FC<DatasetExplorerProps> = ({
 
           {/* Detailed Dataset Views */}
           {selectedDataset && (
-            <div style={{ marginTop: '2rem' }}>
-              <div style={{ display: 'flex', gap: '0.75rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem', marginBottom: '1.25rem' }}>
+            <div className="mt-8">
+              <div className="flex gap-3 border-b border-outline-variant pb-3 mb-6">
                 <button
-                  className={`btn-secondary ${activeTab === 'profile' ? 'btn-primary' : ''}`}
+                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors ${
+                    activeTab === 'profile'
+                      ? 'bg-primary text-on-primary'
+                      : 'bg-surface-container border border-outline-variant text-on-surface hover:bg-surface-container-high'
+                  }`}
                   onClick={() => setActiveTab('profile')}
                 >
-                  📊 Quality Profile & Intelligence
+                  <span className="material-symbols-outlined text-[18px]">analytics</span>
+                  Quality Profile & Intelligence
                 </button>
                 <button
-                  className={`btn-secondary ${activeTab === 'preview' ? 'btn-primary' : ''}`}
+                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors ${
+                    activeTab === 'preview'
+                      ? 'bg-primary text-on-primary'
+                      : 'bg-surface-container border border-outline-variant text-on-surface hover:bg-surface-container-high'
+                  }`}
                   onClick={() => setActiveTab('preview')}
                 >
-                  🔍 Row Data Preview
+                  <span className="material-symbols-outlined text-[18px]">table_view</span>
+                  Row Data Preview
                 </button>
                 <button
-                  className={`btn-secondary ${activeTab === 'sql' ? 'btn-primary' : ''}`}
+                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors ${
+                    activeTab === 'sql'
+                      ? 'bg-primary text-on-primary'
+                      : 'bg-surface-container border border-outline-variant text-on-surface hover:bg-surface-container-high'
+                  }`}
                   onClick={() => setActiveTab('sql')}
                 >
-                  ⚡ DuckDB SQL Console
+                  <span className="material-symbols-outlined text-[18px]">terminal</span>
+                  DuckDB SQL Console
                 </button>
               </div>
 

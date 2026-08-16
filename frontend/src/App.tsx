@@ -4,6 +4,7 @@ import { LoginPage } from './components/pages/LoginPage';
 import { Sidebar } from './components/navigation/Sidebar';
 import { Header } from './components/navigation/Header';
 import { MobileBottomNav } from './components/navigation/MobileBottomNav';
+import { CommandPalette } from './components/navigation/CommandPalette';
 import { OverviewDashboard } from './components/overview/OverviewDashboard';
 import { DatasetExplorer } from './components/datasets/DatasetExplorer';
 import { AnalystWorkspace } from './components/analyst/AnalystWorkspace';
@@ -48,6 +49,7 @@ export default function App() {
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState<boolean>(false);
+  const [isPaletteOpen, setIsPaletteOpen] = useState<boolean>(false);
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | null>(null);
 
   const fetchProjects = useCallback(async () => {
@@ -106,6 +108,16 @@ export default function App() {
     fetchProjects();
   };
 
+  const handlePaletteAction = (action: string) => {
+    if (action === 'open_palette') {
+      setIsPaletteOpen(true);
+      return;
+    }
+    if (['overview', 'datasets', 'analyst', 'insights', 'reports', 'evaluation', 'settings'].includes(action)) {
+      setActiveTab(action as any);
+    }
+  };
+
   if (viewMode === 'landing') {
     return <LandingPage onTryDataMind={() => setViewMode('app')} onLogin={() => setViewMode('login')} />;
   }
@@ -131,6 +143,7 @@ export default function App() {
         backendHealthy={backendHealthy}
         loadingBackend={loadingBackend}
         onRefresh={fetchProjects}
+        onOpenPalette={() => setIsPaletteOpen(true)}
       />
 
       {/* Main Workspace Area */}
@@ -183,7 +196,7 @@ export default function App() {
                     Select or upload a CSV, XLSX, JSON, or Parquet dataset to activate AI query analysis.
                   </p>
                   <button className="btn-primary" onClick={() => setActiveTab('datasets')}>
-                    📁 Go to Dataset Ingestion →
+                    <span className="material-symbols-outlined text-[18px]">folder</span> Go to Dataset Ingestion →
                   </button>
                 </div>
               )
@@ -239,6 +252,13 @@ export default function App() {
 
       {/* Mobile Phone View Bottom Navigation (Hidden on Desktop) */}
       <MobileBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
+
+      {/* Command Palette (Ctrl+K) Overlay */}
+      <CommandPalette
+        isOpen={isPaletteOpen}
+        onClose={() => setIsPaletteOpen(false)}
+        onSelectAction={handlePaletteAction}
+      />
 
       {/* New Project Modal */}
       <ProjectModal

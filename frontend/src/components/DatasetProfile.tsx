@@ -1,37 +1,28 @@
-import React, { useState, useEffect, useCallback } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 
 interface ColumnProfile {
   name: string;
-  data_type: string;
+  type: string;
   null_count: number;
-  null_percentage: number;
-  distinct_count: number;
-  is_numeric: boolean;
-  is_datetime: boolean;
-  is_bool: boolean;
-  stats?: {
-    min: number | null;
-    max: number | null;
-    mean: number | null;
-    median: number | null;
-    std_dev: number | null;
-    outlier_count: number;
-  };
-  top_frequencies: {
-    value: any;
-    count: number;
-    percentage: number;
-  }[];
+  unique_count: number;
+  min: any;
+  max: any;
+  mean?: number;
+  median?: number;
+  stddev?: number;
+  outliers_count?: number;
+  top_categories?: Record<string, number>;
 }
 
-interface ProfileData {
-  total_rows: number;
-  total_columns: number;
-  duplicate_rows: number;
-  overall_null_percentage: number;
-  data_quality_score: number;
+interface ProfilingData {
+  dataset_id: string;
+  version_id: string;
+  row_count: number;
+  column_count: number;
+  quality_score: number;
   quality_warnings: string[];
-  columns: ColumnProfile[];
+  columns: Record<string, ColumnProfile>;
+  computed_at: string;
 }
 
 interface DatasetProfileProps {
@@ -39,7 +30,7 @@ interface DatasetProfileProps {
 }
 
 export const DatasetProfileView: React.FC<DatasetProfileProps> = ({ datasetId }) => {
-  const [profile, setProfile] = useState<ProfileData | null>(null);
+  const [profile, setProfile] = useState<ProfilingData | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -54,7 +45,7 @@ export const DatasetProfileView: React.FC<DatasetProfileProps> = ({ datasetId })
       const data = await res.json();
       setProfile(data);
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Error fetching profile');
+      setError(err instanceof Error ? err.message : 'Unknown profiling error');
     } finally {
       setLoading(false);
     }
@@ -66,130 +57,121 @@ export const DatasetProfileView: React.FC<DatasetProfileProps> = ({ datasetId })
 
   if (loading) {
     return (
-      <div className="glass-card card" style={{ marginTop: '1.5rem', textAlign: 'center', padding: '2rem' }}>
-        <p style={{ color: 'var(--text-muted)' }}>🔄 Calculating deterministic dataset intelligence & quality metrics...</p>
+      <div className="glass-card card" style={{ textAlign: 'center', padding: '2rem' }}>
+        <div className="dropzone-icon">
+          <span className="material-symbols-outlined text-primary text-3xl animate-spin">refresh</span>
+        </div>
+        <p style={{ color: 'var(--text-muted)' }}>Calculating statistical profile & IQR outlier metrics...</p>
       </div>
     );
   }
 
   if (error || !profile) {
     return (
-      <div className="glass-card card" style={{ marginTop: '1.5rem', color: '#ef4444' }}>
-        ⚠️ {error || 'Failed to load profile'}
+      <div className="glass-card card" style={{ padding: '1.5rem', color: 'var(--text-muted)' }}>
+        <span className="material-symbols-outlined text-danger text-[18px] mr-1 align-sub">warning</span> {error || 'Failed to load profile'}
       </div>
     );
   }
 
-  const scoreColor =
-    profile.data_quality_score >= 85
-      ? 'var(--accent-green)'
-      : profile.data_quality_score >= 65
-      ? 'var(--accent-amber)'
-      : '#ef4444';
-
   return (
-    <div style={{ marginTop: '1.5rem', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-      {/* Top Telemetry & Quality Score Banner */}
-      <div className="glass-card card" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', flexWrap: 'wrap', gap: '1.5rem' }}>
-        <div>
-          <h3 className="card-title" style={{ fontSize: '1.3rem', marginBottom: '0.5rem' }}>
-            <span className="card-icon">📈</span> Deterministic Dataset Intelligence
-          </h3>
-          <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem' }}>
-            {profile.total_rows.toLocaleString()} rows × {profile.total_columns} columns | {profile.duplicate_rows} duplicate rows | {profile.overall_null_percentage}% missing cells
-          </p>
+    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
+      {/* Overview Metric Row */}
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem' }}>
+        <div className="glass-card card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--accent-emerald)' }}>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Quality Health Score</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-emerald)' }}>
+            {profile.quality_score.toFixed(1)} / 100
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+            Deterministic Data Evaluation
+          </div>
         </div>
 
-        {/* Quality Score Ring/Gauge */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', background: 'rgba(18, 24, 36, 0.7)', padding: '0.75rem 1.25rem', borderRadius: '12px', border: `1px solid ${scoreColor}` }}>
-          <div style={{ textAlign: 'right' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', textTransform: 'uppercase', fontWeight: 600 }}>Data Quality Score</div>
-            <div style={{ fontSize: '1.8rem', fontWeight: 800, color: scoreColor, fontFamily: 'var(--font-heading)' }}>
-              {profile.data_quality_score} <span style={{ fontSize: '1rem', color: 'var(--text-muted)' }}>/ 100</span>
-            </div>
+        <div className="glass-card card" style={{ padding: '1.25rem' }}>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Total Records</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--text-primary)' }}>
+            {profile.row_count}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+            across {profile.column_count} columns
+          </div>
+        </div>
+
+        <div className="glass-card card" style={{ padding: '1.25rem' }}>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Quality Warnings</div>
+          <div style={{ fontSize: '1.8rem', fontWeight: 800, color: profile.quality_warnings.length > 0 ? 'var(--accent-warning)' : 'var(--accent-emerald)' }}>
+            {profile.quality_warnings.length}
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
+            {profile.quality_warnings.length === 0 ? 'Zero schema anomalies' : 'Anomalies detected'}
           </div>
         </div>
       </div>
 
-      {/* Quality Warnings Banner */}
+      {/* Warnings List */}
       {profile.quality_warnings.length > 0 && (
-        <div className="glass-card card" style={{ borderLeft: '4px solid var(--accent-amber)', background: 'rgba(245, 158, 11, 0.08)' }}>
-          <h4 style={{ color: 'var(--accent-amber)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            ⚠️ Quality Warnings Detected ({profile.quality_warnings.length})
+        <div className="glass-card card" style={{ borderLeft: '4px solid var(--accent-warning)' }}>
+          <h4 style={{ color: 'var(--accent-warning)', fontSize: '0.95rem', marginBottom: '0.5rem' }}>
+            <span className="material-symbols-outlined text-[18px] mr-1 align-sub">warning</span> Quality Warnings Detected ({profile.quality_warnings.length})
           </h4>
-          <ul style={{ paddingLeft: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.9rem', lineHeight: '1.6' }}>
+          <ul style={{ paddingLeft: '1.25rem', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>
             {profile.quality_warnings.map((w, idx) => (
-              <li key={idx}>{w}</li>
+              <li key={idx} style={{ marginBottom: '0.25rem' }}>{w}</li>
             ))}
           </ul>
         </div>
       )}
 
-      {/* Per-Column Profiling Cards Grid */}
-      <div>
-        <h4 style={{ fontSize: '1.1rem', color: 'var(--text-primary)', marginBottom: '1rem' }}>
-          Column Statistical Profiles ({profile.columns.length})
+      {/* Column Breakdown Cards */}
+      <div className="glass-card card">
+        <h4 style={{ color: 'var(--text-primary)', marginBottom: '1rem', fontSize: '1rem' }}>
+          Column Statistical Breakdown
         </h4>
 
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(340px, 1fr))', gap: '1.25rem' }}>
-          {profile.columns.map((col, idx) => (
-            <div className="glass-card card" key={idx}>
-              <div className="card-header" style={{ marginBottom: '0.75rem' }}>
-                <strong style={{ fontSize: '1.05rem', color: 'var(--text-primary)' }}>{col.name}</strong>
-                <span className="brand-badge" style={{ fontSize: '0.7rem' }}>{col.data_type}</span>
-              </div>
-
-              <div className="info-list" style={{ gap: '0.5rem', fontSize: '0.85rem' }}>
-                <div className="info-item">
-                  <span className="info-label">Missing Values</span>
-                  <span className="info-value" style={{ color: col.null_percentage > 5 ? 'var(--accent-amber)' : 'var(--text-primary)' }}>
-                    {col.null_count} ({col.null_percentage}%)
-                  </span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Distinct Cardinality</span>
-                  <span className="info-value">{col.distinct_count.toLocaleString()} unique</span>
-                </div>
-
-                {/* Numeric Statistics */}
-                {col.is_numeric && col.stats && (
-                  <>
-                    <div className="info-item">
-                      <span className="info-label">Min / Max</span>
-                      <span className="info-value">{col.stats.min} → {col.stats.max}</span>
-                    </div>
-                    <div className="info-item">
-                      <span className="info-label">Mean / Median</span>
-                      <span className="info-value">{col.stats.mean} / {col.stats.median}</span>
-                    </div>
-                    {col.stats.outlier_count > 0 && (
-                      <div className="info-item" style={{ background: 'rgba(239, 68, 68, 0.1)' }}>
-                        <span className="info-label" style={{ color: '#ef4444' }}>Outliers (1.5 IQR)</span>
-                        <span className="info-value" style={{ color: '#ef4444' }}>{col.stats.outlier_count} values</span>
-                      </div>
+        <div style={{ overflowX: 'auto' }}>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th>Column</th>
+                <th>Type</th>
+                <th>Nulls</th>
+                <th>Uniques</th>
+                <th>Min / Max</th>
+                <th>Mean ± StdDev</th>
+                <th>1.5×IQR Outliers</th>
+              </tr>
+            </thead>
+            <tbody>
+              {Object.entries(profile.columns).map(([colName, col]) => (
+                <tr key={colName}>
+                  <td><strong style={{ color: 'var(--text-primary)' }}>{colName}</strong></td>
+                  <td><span className="badge-pill badge-cyan" style={{ fontSize: '0.65rem' }}>{col.type}</span></td>
+                  <td style={{ color: col.null_count > 0 ? 'var(--accent-warning)' : 'var(--text-secondary)' }}>
+                    {col.null_count}
+                  </td>
+                  <td>{col.unique_count}</td>
+                  <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    {col.min !== null ? String(col.min) : '-'} / {col.max !== null ? String(col.max) : '-'}
+                  </td>
+                  <td style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>
+                    {col.mean !== undefined && col.mean !== null ? (
+                      `${col.mean.toFixed(2)} ± ${col.stddev?.toFixed(2) || '0'}`
+                    ) : '-'}
+                  </td>
+                  <td>
+                    {col.outliers_count !== undefined && col.outliers_count > 0 ? (
+                      <span className="badge-pill" style={{ background: 'rgba(239, 68, 68, 0.2)', color: '#ef4444' }}>
+                        {col.outliers_count} outliers
+                      </span>
+                    ) : (
+                      <span style={{ color: 'var(--text-muted)', fontSize: '0.8rem' }}>None</span>
                     )}
-                  </>
-                )}
-
-                {/* Categorical Top Values */}
-                {col.top_frequencies && col.top_frequencies.length > 0 && (
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.4rem', fontWeight: 600 }}>
-                      Top Frequency Values
-                    </div>
-                    {col.top_frequencies.slice(0, 3).map((freq, fIdx) => (
-                      <div key={fIdx} style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.8rem', color: 'var(--text-secondary)', marginBottom: '0.2rem' }}>
-                        <span style={{ textOverflow: 'ellipsis', overflow: 'hidden', whiteSpace: 'nowrap', maxWidth: '180px' }}>
-                          "{String(freq.value)}"
-                        </span>
-                        <span style={{ fontFamily: 'var(--font-mono)' }}>{freq.count} ({freq.percentage}%)</span>
-                      </div>
-                    ))}
-                  </div>
-                )}
-              </div>
-            </div>
-          ))}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
