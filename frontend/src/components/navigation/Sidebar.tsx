@@ -1,4 +1,13 @@
 import React from 'react';
+import {
+  IconOverview,
+  IconDataset,
+  IconBrain,
+  IconLightbulb,
+  IconReport,
+  IconSettings,
+  IconPlus,
+} from '../ui/Icons';
 
 interface SidebarProps {
   activeTab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'settings';
@@ -8,11 +17,11 @@ interface SidebarProps {
 
 export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNewProject }) => {
   const navItems = [
-    { id: 'overview', label: 'Overview', icon: '📊' },
-    { id: 'datasets', label: 'Datasets', icon: '📁' },
-    { id: 'analyst', label: 'AI Analyst', icon: '🧠' },
-    { id: 'insights', label: 'Insights', icon: '💡' },
-    { id: 'reports', label: 'Reports', icon: '📝' },
+    { id: 'overview', label: 'Overview', Icon: IconOverview },
+    { id: 'datasets', label: 'Datasets', Icon: IconDataset },
+    { id: 'analyst', label: 'AI Analyst', Icon: IconBrain },
+    { id: 'insights', label: 'Insights', Icon: IconLightbulb },
+    { id: 'reports', label: 'Reports', Icon: IconReport },
   ] as const;
 
   return (
@@ -42,11 +51,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-            fontSize: '1.2rem',
+            color: '#ffffff',
             boxShadow: '0 0 15px rgba(140, 128, 255, 0.4)',
           }}
         >
-          ⚡
+          <IconBrain size={22} color="#ffffff" />
         </div>
         <div>
           <h1 style={{ fontFamily: 'var(--font-display)', fontSize: '1.2rem', fontWeight: 800, color: 'var(--text-primary)', lineHeight: 1.1 }}>
@@ -65,7 +74,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
           style={{ width: '100%', justifyContent: 'center', padding: '0.65rem 1rem' }}
           onClick={onNewProject}
         >
-          <span>+</span> New Project
+          <IconPlus size={18} /> New Project
         </button>
       </div>
 
@@ -73,6 +82,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
       <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.35rem', flex: 1 }}>
         {navItems.map((item) => {
           const isActive = activeTab === item.id;
+          const { Icon } = item;
           return (
             <button
               key={item.id}
@@ -94,7 +104,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
                 transition: 'all 0.2s ease',
               }}
             >
-              <span style={{ fontSize: '1.1rem' }}>{item.icon}</span>
+              <Icon size={18} color={isActive ? 'var(--accent-light)' : 'var(--text-secondary)'} />
               <span>{item.label}</span>
             </button>
           );
@@ -121,7 +131,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
             marginBottom: '0.75rem',
           }}
         >
-          <span>⚙️</span>
+          <IconSettings size={18} color={activeTab === 'settings' ? 'var(--accent-light)' : 'var(--text-secondary)'} />
           <span>Settings</span>
         </button>
 

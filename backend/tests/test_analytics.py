@@ -20,7 +20,7 @@ def test_duckdb_analytics_query():
     csv_content = (
         b"region,sales,quantity\n"
         b"North,1500,10\n"
-        b"South,2200,15\n"
+        b"South,2500,15\n"
         b"North,1800,12\n"
         b"East,900,5\n"
         b"South,1100,8\n"
@@ -42,9 +42,9 @@ def test_duckdb_analytics_query():
     assert "region" in data["columns"]
     assert "total_sales" in data["columns"]
 
-    # Check top region (South: 2200 + 1100 = 3300)
+    # Check top region (South: 2500 + 1100 = 3600)
     assert data["rows"][0]["region"] == "South"
-    assert data["rows"][0]["total_sales"] == 3300
+    assert data["rows"][0]["total_sales"] == 3600
 
 
 def test_ddl_rejection():

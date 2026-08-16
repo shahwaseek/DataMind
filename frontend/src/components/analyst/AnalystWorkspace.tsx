@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChartViewer } from '../ChartViewer';
+import { IconDataset, IconShield, IconBrain, IconRefresh } from '../ui/Icons';
 
 interface AnalysisRecord {
   id: string;
@@ -113,7 +114,7 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
           What would you like to understand?
         </h2>
         <div className="badge-pill badge-purple" style={{ margin: '0 auto 1.5rem auto' }}>
-          <span>📂</span>
+          <IconDataset size={14} color="var(--accent-light)" />
           <span>Analyzing: {datasetName}</span>
         </div>
 
@@ -148,10 +149,14 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
           />
 
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem', marginTop: '0.5rem' }}>
-            <div style={{ display: 'flex', gap: '0.5rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-              <span title="Read-only Execution Guard">🛡️ Read-Only Guard</span>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
+              <span title="Read-only Execution Guard" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <IconShield size={14} color="var(--accent-emerald)" /> Read-Only Guard
+              </span>
               <span>•</span>
-              <span title="Ollama Model Identifier">🧠 Local Ollama</span>
+              <span title="Ollama Model Identifier" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
+                <IconBrain size={14} color="var(--accent-cyan)" /> Local Ollama
+              </span>
             </div>
 
             <button className="btn-primary" onClick={() => handleAskQuestion()} disabled={analyzing}>
@@ -163,10 +168,10 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
         {/* Suggested Chips */}
         <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1.25rem', flexWrap: 'wrap' }}>
           {[
-            { label: '⭐ Top products & categories', q: 'Which category or region generated highest metrics?' },
-            { label: '📈 Revenue & trend summary', q: 'How many total records exist in this dataset?' },
-            { label: '🗺️ Compare metrics & averages', q: 'What is the average value for numeric columns?' },
-            { label: '🔍 Find unusual patterns', q: 'Find top 5 records ordered by values' },
+            { label: 'Top products & categories', q: 'Which category or region generated highest metrics?' },
+            { label: 'Revenue & trend summary', q: 'How many total records exist in this dataset?' },
+            { label: 'Compare metrics & averages', q: 'What is the average value for numeric columns?' },
+            { label: 'Find unusual patterns', q: 'Find top 5 records ordered by values' },
           ].map((chip, idx) => (
             <button
               key={idx}
@@ -227,7 +232,7 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
                 onClick={() => handleRerun(currentAnalysis.id)}
                 disabled={analyzing}
               >
-                🔄 Re-run Analysis (Verify Reproducibility)
+                <IconRefresh size={14} /> Re-run Analysis (Verify Reproducibility)
               </button>
             </div>
           </div>

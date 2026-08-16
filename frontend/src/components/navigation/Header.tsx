@@ -1,4 +1,5 @@
 import React from 'react';
+import { IconSearch, IconRefresh } from '../ui/Icons';
 
 interface Project {
   id: string;
@@ -90,11 +91,12 @@ export const Header: React.FC<HeaderProps> = ({
               left: '0.75rem',
               top: '50%',
               transform: 'translateY(-50%)',
-              fontSize: '0.85rem',
+              display: 'flex',
+              alignItems: 'center',
               color: 'var(--text-muted)',
             }}
           >
-            🔍
+            <IconSearch size={14} />
           </span>
         </div>
 
@@ -128,7 +130,7 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         <button className="btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }} onClick={onRefresh}>
-          🔄 Refresh
+          <IconRefresh size={14} /> Refresh
         </button>
       </div>
     </header>
