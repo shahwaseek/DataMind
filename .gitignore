@@ -44,9 +44,8 @@ dist-ssr/
 *.sqlite
 *.sqlite3
 *.duckdb
-data/uploads/
-data/exports/
-data/temp/
+data/
+backend/data/
 
 # IDE & OS
 .vscode/
