@@ -68,5 +68,25 @@ def init_db():
                 FOREIGN KEY (dataset_id) REFERENCES datasets (id) ON DELETE CASCADE
             );
             """)
+
+            # Analyses table
+            conn.execute("""
+            CREATE TABLE IF NOT EXISTS analyses (
+                id TEXT PRIMARY KEY,
+                project_id TEXT NOT NULL,
+                dataset_id TEXT NOT NULL,
+                question TEXT NOT NULL,
+                intent TEXT NOT NULL,
+                explanation TEXT NOT NULL,
+                generated_sql TEXT NOT NULL,
+                execution_result_json TEXT NOT NULL,
+                validation_status TEXT NOT NULL,
+                model_identifier TEXT NOT NULL,
+                execution_time_ms REAL NOT NULL,
+                created_at TEXT NOT NULL,
+                FOREIGN KEY (project_id) REFERENCES projects (id) ON DELETE CASCADE,
+                FOREIGN KEY (dataset_id) REFERENCES datasets (id) ON DELETE CASCADE
+            );
+            """)
     finally:
         conn.close()

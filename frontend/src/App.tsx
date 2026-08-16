@@ -4,6 +4,7 @@ import { DatasetUpload } from './components/DatasetUpload';
 import { DatasetPreview } from './components/DatasetPreview';
 import { DatasetProfileView } from './components/DatasetProfile';
 import { SQLConsole } from './components/SQLConsole';
+import { AnalystChat } from './components/AnalystChat';
 
 interface Project {
   id: string;
@@ -33,7 +34,7 @@ export default function App() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'profile' | 'preview' | 'sql'>('profile');
+  const [activeTab, setActiveTab] = useState<'chat' | 'profile' | 'preview' | 'sql'>('chat');
   
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
@@ -121,7 +122,7 @@ export default function App() {
           <div className="brand-logo">DM</div>
           <div>
             <span className="brand-title">DataMind</span>
-            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 3</span>
+            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 4 & 5</span>
           </div>
         </div>
 
@@ -136,7 +137,7 @@ export default function App() {
               {loadingBackend
                 ? 'Connecting...'
                 : backendHealthy
-                ? 'Backend Ready'
+                ? 'Backend & Ollama Ready'
                 : 'Backend Disconnected'}
             </span>
           </div>
@@ -223,6 +224,13 @@ export default function App() {
                   <div style={{ marginTop: '2rem' }}>
                     <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                       <button
+                        className={`btn ${activeTab === 'chat' ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => setActiveTab('chat')}
+                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
+                      >
+                        💬 AI Analyst Chat
+                      </button>
+                      <button
                         className={`btn ${activeTab === 'profile' ? 'btn-primary' : 'btn-secondary'}`}
                         onClick={() => setActiveTab('profile')}
                         style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
@@ -245,7 +253,9 @@ export default function App() {
                       </button>
                     </div>
 
-                    {activeTab === 'profile' ? (
+                    {activeTab === 'chat' ? (
+                      <AnalystChat projectId={selectedProjectId} datasetId={selectedDataset.id} datasetName={selectedDataset.name} />
+                    ) : activeTab === 'profile' ? (
                       <DatasetProfileView datasetId={selectedDataset.id} />
                     ) : activeTab === 'preview' ? (
                       <DatasetPreview dataset={selectedDataset} previewData={previewData} loading={loadingPreview} />
@@ -279,7 +289,7 @@ export default function App() {
 
       {/* Footer */}
       <footer>
-        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 3 — DuckDB Deterministic Analytics Engine.</p>
+        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 4 & 5 — Analyst API & Local LLM Integration Verified.</p>
       </footer>
     </div>
   );
