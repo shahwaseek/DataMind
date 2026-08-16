@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { IconBrain, IconShield } from '../ui/Icons';
+import { IconBrain, IconShield } from '@/components/ui/Icons';
 
 interface LoginPageProps {
   onSuccess: () => void;
@@ -92,7 +92,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onBackToLanding
           <div style={{ flex: 1, height: '1px', background: '#252A32' }} />
         </div>
 
-        <button className="btn-secondary" style={{ width: '100%', justifyContent: 'center', padding: '0.65rem' }} onClick={onSuccess}>
+        <button className="btn-secondary cursor-pointer" style={{ width: '100%', justifyContent: 'center', padding: '0.65rem' }} onClick={onSuccess}>
           <span className="material-symbols-outlined text-[18px]">vpn_key</span> Continue with Google / SSO
         </button>
 

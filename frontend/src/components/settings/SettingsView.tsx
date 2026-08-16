@@ -2,46 +2,59 @@ import React from 'react';
 
 export const SettingsView: React.FC = () => {
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem', maxWidth: '800px' }}>
-      <div className="glass-panel" style={{ padding: '1.5rem' }}>
-        <h3 style={{ color: 'var(--text-primary)', marginBottom: '1.25rem', fontSize: '1.2rem' }}>
-          ⚙️ DataMind System & AI Settings
+    <div className="flex flex-col gap-6 max-w-4xl mx-auto w-full">
+      <div className="border-b border-outline-variant pb-4">
+        <h2 className="font-display text-2xl font-bold text-on-surface mb-1">Workspace & System Settings</h2>
+        <p className="font-body text-sm text-on-surface-variant">Configure local LLM parameters, database engine behavior, and privacy boundaries.</p>
+      </div>
+
+      <div className="bg-surface-container border border-outline-variant p-6 rounded-lg flex flex-col gap-5">
+        <h3 className="font-display text-lg font-semibold text-on-surface flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[20px]">psychology</span>
+          Local LLM Configuration
         </h3>
 
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.25rem' }}>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-              Local Ollama Base URL
+            <label className="font-label text-xs uppercase text-on-surface-variant font-semibold block mb-1.5">
+              Ollama Model Identifier
             </label>
-            <input className="form-input" defaultValue="http://localhost:11434" readOnly />
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>
-              Communicates asynchronously with local Ollama service over localhost HTTP.
-            </span>
+            <input
+              type="text"
+              className="form-input"
+              defaultValue="qwen2.5-coder:7b"
+              readOnly
+            />
           </div>
 
           <div>
-            <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-              Default Ollama Model
+            <label className="font-label text-xs uppercase text-on-surface-variant font-semibold block mb-1.5">
+              Sampling Temperature
             </label>
-            <input className="form-input" defaultValue="llama3.2" readOnly />
+            <input
+              type="text"
+              className="form-input"
+              defaultValue="0.0 (Deterministic SQL)"
+              readOnly
+            />
           </div>
+        </div>
+      </div>
 
-          <div>
-            <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-              DuckDB Analytics Engine
-            </label>
-            <div className="badge-pill badge-emerald">In-Memory Read-Only (:memory:)</div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginTop: '0.25rem', display: 'block' }}>
-              Enforces read-only AST query rules blocking DDL, DML, and file manipulation functions.
-            </span>
-          </div>
+      <div className="bg-surface-container border border-outline-variant p-6 rounded-lg flex flex-col gap-5">
+        <h3 className="font-display text-lg font-semibold text-on-surface flex items-center gap-2">
+          <span className="material-symbols-outlined text-primary text-[20px]">database</span>
+          DuckDB Engine Security
+        </h3>
 
+        <div className="flex items-center justify-between p-4 bg-surface-container-lowest rounded border border-micro">
           <div>
-            <label style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', display: 'block', marginBottom: '0.4rem', fontWeight: 600 }}>
-              Local Storage Path
-            </label>
-            <input className="form-input" defaultValue="./data/datamind.db" readOnly />
+            <div className="font-body text-sm font-semibold text-on-surface">AST Read-Only Guard Boundary</div>
+            <div className="font-body text-xs text-on-surface-variant">Blocks DDL, DML, write queries, and file-system read functions.</div>
           </div>
+          <span className="px-3 py-1 rounded-full bg-success/20 text-success font-code text-xs font-bold">
+            ACTIVE
+          </span>
         </div>
       </div>
     </div>

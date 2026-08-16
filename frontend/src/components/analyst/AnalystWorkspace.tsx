@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
-import { ChartViewer } from '../ChartViewer';
+import { ChartViewer } from '@/components/ChartViewer';
 
 interface AnalysisRecord {
   id: string;
@@ -145,7 +145,7 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
               </div>
 
               <button
-                className="bg-primary text-on-primary px-4 py-1.5 rounded-lg font-body text-sm font-semibold flex items-center gap-2 hover:bg-primary-fixed transition-colors"
+                className="bg-primary text-on-primary px-4 py-1.5 rounded-lg font-body text-sm font-semibold flex items-center gap-2 hover:bg-primary-fixed transition-colors cursor-pointer"
                 onClick={() => handleAskQuestion()}
                 disabled={analyzing}
               >
@@ -217,7 +217,7 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
 
             <div className="flex justify-end">
               <button
-                className="bg-surface-container-high hover:bg-surface-variant text-on-surface text-xs font-semibold py-1.5 px-3 rounded flex items-center gap-1.5 transition-colors"
+                className="bg-surface-container-high hover:bg-surface-variant text-on-surface text-xs font-semibold py-1.5 px-3 rounded flex items-center gap-1.5 transition-colors cursor-pointer"
                 onClick={() => handleRerun(currentAnalysis.id)}
                 disabled={analyzing}
               >

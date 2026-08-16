@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
-import { DatasetUpload } from '../DatasetUpload';
-import { DatasetPreview } from '../DatasetPreview';
-import { DatasetProfileView } from '../DatasetProfile';
-import { SQLConsole } from '../SQLConsole';
+import { DatasetUpload } from '@/components/DatasetUpload';
+import { DatasetPreview } from '@/components/DatasetPreview';
+import { DatasetProfileView } from '@/components/DatasetProfile';
+import { SQLConsole } from '@/components/SQLConsole';
 
 interface Dataset {
   id: string;
@@ -79,7 +79,7 @@ export const DatasetExplorer: React.FC<DatasetExplorerProps> = ({
             <div className="mt-8">
               <div className="flex gap-3 border-b border-outline-variant pb-3 mb-6">
                 <button
-                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors ${
+                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
                     activeTab === 'profile'
                       ? 'bg-primary text-on-primary'
                       : 'bg-surface-container border border-outline-variant text-on-surface hover:bg-surface-container-high'
@@ -90,7 +90,7 @@ export const DatasetExplorer: React.FC<DatasetExplorerProps> = ({
                   Quality Profile & Intelligence
                 </button>
                 <button
-                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors ${
+                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
                     activeTab === 'preview'
                       ? 'bg-primary text-on-primary'
                       : 'bg-surface-container border border-outline-variant text-on-surface hover:bg-surface-container-high'
@@ -101,7 +101,7 @@ export const DatasetExplorer: React.FC<DatasetExplorerProps> = ({
                   Row Data Preview
                 </button>
                 <button
-                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors ${
+                  className={`px-4 py-2 rounded font-body text-sm font-semibold flex items-center gap-2 transition-colors cursor-pointer ${
                     activeTab === 'sql'
                       ? 'bg-primary text-on-primary'
                       : 'bg-surface-container border border-outline-variant text-on-surface hover:bg-surface-container-high'

@@ -60,7 +60,7 @@ export const InsightsView: React.FC<InsightsViewProps> = ({ datasetName }) => {
               <p className="font-body text-xs text-on-surface-variant leading-relaxed mb-4">{item.description}</p>
             </div>
 
-            <button className="btn-secondary w-full justify-center text-xs">
+            <button className="btn-secondary w-full justify-center text-xs cursor-pointer">
               Explore Query Trace →
             </button>
           </div>

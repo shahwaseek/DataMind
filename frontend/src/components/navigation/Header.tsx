@@ -51,7 +51,7 @@ export const Header: React.FC<HeaderProps> = ({
         {/* Global Search Input triggering Command Palette */}
         <button
           onClick={onOpenPalette}
-          className="relative bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 text-left font-body text-sm text-on-surface-variant hover:border-primary hover:text-on-surface w-56 flex items-center justify-between transition-all"
+          className="relative bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 text-left font-body text-sm text-on-surface-variant hover:border-primary hover:text-on-surface w-56 flex items-center justify-between transition-all cursor-pointer"
         >
           <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">
             search
@@ -75,18 +75,18 @@ export const Header: React.FC<HeaderProps> = ({
         </div>
 
         <button
-          className="text-on-surface-variant hover:text-on-surface transition-colors p-1"
+          className="text-on-surface-variant hover:text-on-surface transition-colors p-1 cursor-pointer"
           title="Refresh Workspace"
           onClick={onRefresh}
         >
           <span className="material-symbols-outlined text-[20px]">refresh</span>
         </button>
 
-        <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1" title="Help">
+        <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1 cursor-pointer" title="Help">
           <span className="material-symbols-outlined text-[20px]">help</span>
         </button>
 
-        <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1 relative" title="Notifications">
+        <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1 relative cursor-pointer" title="Notifications">
           <span className="material-symbols-outlined text-[20px]">notifications</span>
           <span className="absolute top-0 right-0 w-2 h-2 bg-danger rounded-full" />
         </button>

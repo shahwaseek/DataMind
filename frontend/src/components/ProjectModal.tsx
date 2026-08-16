@@ -108,10 +108,10 @@ export const ProjectModal: React.FC<ProjectModalProps> = ({ isOpen, onClose, onP
           </div>
 
           <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '0.75rem', marginTop: '0.5rem' }}>
-            <button className="btn-secondary" type="button" onClick={onClose} disabled={submitting}>
+            <button className="btn-secondary cursor-pointer" type="button" onClick={onClose} disabled={submitting}>
               Cancel
             </button>
-            <button className="btn-primary" type="submit" disabled={submitting || !name.trim()}>
+            <button className="btn-primary cursor-pointer" type="submit" disabled={submitting || !name.trim()}>
               {submitting ? 'Creating...' : 'Create Project →'}
             </button>
           </div>

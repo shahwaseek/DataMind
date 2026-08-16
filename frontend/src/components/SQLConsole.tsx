@@ -80,7 +80,7 @@ export const SQLConsole: React.FC<SQLConsoleProps> = ({ datasetId, datasetName }
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>
             🔒 AST Guard Enabled (DDL / DML & File Functions Blocked)
           </div>
-          <button className="btn-primary" onClick={handleExecute} disabled={executing || !query.trim()}>
+          <button className="btn-primary cursor-pointer" onClick={handleExecute} disabled={executing || !query.trim()}>
             {executing ? 'Executing Query...' : 'Run SQL Query →'}
           </button>
         </div>

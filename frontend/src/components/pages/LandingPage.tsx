@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconBrain } from '../ui/Icons';
+import { IconBrain } from '@/components/ui/Icons';
 
 interface LandingPageProps {
   onTryDataMind: () => void;

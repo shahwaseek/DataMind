@@ -71,7 +71,7 @@ export const CommandPalette: React.FC<CommandPaletteProps> = ({ isOpen, onClose,
                   onSelectAction(cmd.id);
                   onClose();
                 }}
-                className="w-full flex items-center justify-between px-3 py-2.5 rounded hover:bg-surface-container-highest text-left transition-colors group"
+                className="w-full flex items-center justify-between px-3 py-2.5 rounded hover:bg-surface-container-highest text-left transition-colors cursor-pointer group"
               >
                 <div className="flex items-center gap-3">
                   <span className="material-symbols-outlined text-on-surface-variant group-hover:text-primary transition-colors text-[20px]">

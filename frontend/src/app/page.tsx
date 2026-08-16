@@ -1,19 +1,21 @@
+'use client';
+
 import { useState, useEffect, useCallback } from 'react';
-import { LandingPage } from './components/pages/LandingPage';
-import { LoginPage } from './components/pages/LoginPage';
-import { Sidebar } from './components/navigation/Sidebar';
-import { Header } from './components/navigation/Header';
-import { MobileBottomNav } from './components/navigation/MobileBottomNav';
-import { CommandPalette } from './components/navigation/CommandPalette';
-import { OverviewDashboard } from './components/overview/OverviewDashboard';
-import { DatasetExplorer } from './components/datasets/DatasetExplorer';
-import { AnalystWorkspace } from './components/analyst/AnalystWorkspace';
-import { InsightsView } from './components/insights/InsightsView';
-import { ReportsView } from './components/reports/ReportsView';
-import { EvaluationView } from './components/evaluation/EvaluationView';
-import { SettingsView } from './components/settings/SettingsView';
-import { ProjectModal } from './components/ProjectModal';
-import { LegalModal } from './components/LegalModal';
+import { LandingPage } from '@/components/pages/LandingPage';
+import { LoginPage } from '@/components/pages/LoginPage';
+import { Sidebar } from '@/components/navigation/Sidebar';
+import { Header } from '@/components/navigation/Header';
+import { MobileBottomNav } from '@/components/navigation/MobileBottomNav';
+import { CommandPalette } from '@/components/navigation/CommandPalette';
+import { OverviewDashboard } from '@/components/overview/OverviewDashboard';
+import { DatasetExplorer } from '@/components/datasets/DatasetExplorer';
+import { AnalystWorkspace } from '@/components/analyst/AnalystWorkspace';
+import { InsightsView } from '@/components/insights/InsightsView';
+import { ReportsView } from '@/components/reports/ReportsView';
+import { EvaluationView } from '@/components/evaluation/EvaluationView';
+import { SettingsView } from '@/components/settings/SettingsView';
+import { ProjectModal } from '@/components/ProjectModal';
+import { LegalModal } from '@/components/LegalModal';
 
 interface Project {
   id: string;
@@ -37,15 +39,15 @@ interface Dataset {
   };
 }
 
-export default function App() {
+export default function Home() {
   const [viewMode, setViewMode] = useState<'app' | 'landing' | 'login'>('app');
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
-  
+
   const [activeTab, setActiveTab] = useState<'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'evaluation' | 'settings'>('analyst');
-  
+
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
   const [isProjectModalOpen, setIsProjectModalOpen] = useState<boolean>(false);

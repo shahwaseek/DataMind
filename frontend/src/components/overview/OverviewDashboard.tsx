@@ -33,10 +33,10 @@ export const OverviewDashboard: React.FC<OverviewDashboardProps> = ({
         </p>
 
         <div className="flex gap-4">
-          <button className="btn-primary" onClick={onNavigateToAnalyst}>
+          <button className="btn-primary cursor-pointer" onClick={onNavigateToAnalyst}>
             <span className="material-symbols-outlined text-[18px]">psychology</span> Start AI Analysis →
           </button>
-          <button className="btn-secondary" onClick={onNavigateToDatasets}>
+          <button className="btn-secondary cursor-pointer" onClick={onNavigateToDatasets}>
             <span className="material-symbols-outlined text-[18px]">folder</span> Manage Datasets ({datasets.length})
           </button>
         </div>

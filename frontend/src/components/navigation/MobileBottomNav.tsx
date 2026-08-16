@@ -23,7 +23,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, set
           <button
             key={tab.id}
             onClick={() => setActiveTab(tab.id)}
-            className={`flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-colors ${
+            className={`flex flex-col items-center justify-center gap-1 flex-1 py-1 transition-colors cursor-pointer ${
               isActive ? 'text-primary font-bold' : 'text-on-surface-variant hover:text-on-surface'
             }`}
           >

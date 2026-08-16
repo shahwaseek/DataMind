@@ -34,7 +34,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
       {/* New Project Action Button */}
       <div className="px-6 mb-6">
         <button
-          className="w-full py-2 px-4 rounded bg-primary text-on-primary font-body text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity"
+          className="w-full py-2 px-4 rounded bg-primary text-on-primary font-body text-sm font-semibold flex items-center justify-center gap-2 hover:opacity-90 transition-opacity cursor-pointer"
           onClick={onNewProject}
         >
           <span className="material-symbols-outlined text-[18px]">add</span>
@@ -50,7 +50,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
             <li key={item.id}>
               <button
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3 px-3 py-2 rounded font-body text-sm transition-all duration-200 text-left ${
+                className={`w-full flex items-center gap-3 px-3 py-2 rounded font-body text-sm transition-all duration-200 text-left cursor-pointer ${
                   isActive
                     ? 'bg-secondary-container text-on-secondary-container font-bold'
                     : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'
@@ -68,7 +68,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
       <div className="mt-auto px-3">
         <button
           onClick={() => setActiveTab('settings')}
-          className={`w-full flex items-center gap-3 px-3 py-2 rounded font-body text-sm transition-all duration-200 text-left mb-4 ${
+          className={`w-full flex items-center gap-3 px-3 py-2 rounded font-body text-sm transition-all duration-200 text-left mb-4 cursor-pointer ${
             activeTab === 'settings'
               ? 'bg-secondary-container text-on-secondary-container font-bold'
               : 'text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface'

@@ -33,7 +33,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ projectId }) => {
           <h2 className="font-display text-2xl font-bold text-on-surface mb-1">Executive Reports Generator</h2>
           <p className="font-body text-sm text-on-surface-variant">Compile evidence-backed executive markdown summaries for stakeholders.</p>
         </div>
-        <button className="btn-primary" onClick={handleGenerateReport} disabled={loading}>
+        <button className="btn-primary cursor-pointer" onClick={handleGenerateReport} disabled={loading}>
           <span className="material-symbols-outlined text-[18px]">description</span>
           {loading ? 'Generating...' : 'Generate Executive Report'}
         </button>
@@ -53,7 +53,7 @@ export const ReportsView: React.FC<ReportsViewProps> = ({ projectId }) => {
               EXECUTIVE REPORT GENERATED
             </span>
             <button
-              className="btn-secondary text-xs"
+              className="btn-secondary text-xs cursor-pointer"
               onClick={() => navigator.clipboard.writeText(report)}
             >
               Copy Markdown

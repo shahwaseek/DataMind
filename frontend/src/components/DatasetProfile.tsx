@@ -81,7 +81,7 @@ export const DatasetProfileView: React.FC<DatasetProfileProps> = ({ datasetId })
         <div className="glass-card card" style={{ padding: '1.25rem', borderLeft: '4px solid var(--accent-emerald)' }}>
           <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Quality Health Score</div>
           <div style={{ fontSize: '1.8rem', fontWeight: 800, color: 'var(--accent-emerald)' }}>
-            {profile.quality_score.toFixed(1)} / 100
+            {(profile.quality_score || 0).toFixed(1)} / 100
           </div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginTop: '0.25rem' }}>
             Deterministic Data Evaluation
