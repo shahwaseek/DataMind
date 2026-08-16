@@ -1,6 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { ChartViewer } from '../ChartViewer';
-import { IconDataset, IconShield, IconBrain, IconRefresh } from '../ui/Icons';
 
 interface AnalysisRecord {
   id: string;
@@ -107,150 +106,139 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
   };
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', gap: '2rem', maxWidth: '1100px', margin: '0 auto', width: '100%' }}>
-      {/* Central Input Hero (Matching Stitch Project Design) */}
-      <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-        <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '2rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.5rem', letterSpacing: '-0.02em' }}>
+    <div className="flex-1 flex flex-col items-center justify-center max-w-4xl mx-auto w-full py-4">
+      {/* Central Input Hero (Matching Stitch Exact HTML Markup) */}
+      <div className="w-full text-center mb-6">
+        <h2 className="font-display text-3xl font-semibold text-on-surface mb-2 tracking-tight">
           What would you like to understand?
         </h2>
-        <div className="badge-pill badge-purple" style={{ margin: '0 auto 1.5rem auto' }}>
-          <IconDataset size={14} color="var(--accent-light)" />
-          <span>Analyzing: {datasetName}</span>
+        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant mb-6">
+          <span className="material-symbols-outlined text-primary text-sm">database</span>
+          <span className="font-code text-xs text-on-surface-variant">Analyzing: {datasetName}</span>
         </div>
 
-        {/* Glowing Input Box Card */}
-        <div
-          className="glass-panel"
-          style={{
-            padding: '1rem',
-            textAlign: 'left',
-            position: 'relative',
-            border: '1px solid var(--border-glow)',
-            boxShadow: '0 0 35px rgba(140, 128, 255, 0.15)',
-          }}
-        >
-          <textarea
-            rows={3}
-            style={{
-              width: '100%',
-              background: 'transparent',
-              border: 'none',
-              color: 'var(--text-primary)',
-              fontFamily: 'var(--font-body)',
-              fontSize: '1rem',
-              outline: 'none',
-              resize: 'none',
-            }}
-            placeholder="Ask anything about your dataset in plain English..."
-            value={question}
-            onChange={(e) => setQuestion(e.target.value)}
-            onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleAskQuestion())}
-            disabled={analyzing}
-          />
+        {/* Input Container with Glowing Gradient */}
+        <div className="relative group text-left">
+          <div className="absolute -inset-0.5 bg-gradient-to-r from-primary to-inverse-primary rounded-xl opacity-20 group-hover:opacity-40 transition duration-500 blur-sm" />
+          <div className="relative bg-surface-container border border-outline-variant rounded-xl p-3 flex flex-col gap-2 transition-colors focus-within:border-primary">
+            <textarea
+              className="w-full bg-transparent border-none resize-none font-body text-base text-on-surface placeholder:text-on-surface-variant focus:ring-0 p-2 outline-none"
+              placeholder="Ask anything about your dataset..."
+              rows={3}
+              value={question}
+              onChange={(e) => setQuestion(e.target.value)}
+              onKeyDown={(e) => e.key === 'Enter' && !e.shiftKey && (e.preventDefault(), handleAskQuestion())}
+              disabled={analyzing}
+            />
 
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', borderTop: '1px solid var(--border-subtle)', paddingTop: '0.75rem', marginTop: '0.5rem' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', color: 'var(--text-muted)', fontSize: '0.85rem' }}>
-              <span title="Read-only Execution Guard" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <IconShield size={14} color="var(--accent-emerald)" /> Read-Only Guard
-              </span>
-              <span>•</span>
-              <span title="Ollama Model Identifier" style={{ display: 'flex', alignItems: 'center', gap: '0.35rem' }}>
-                <IconBrain size={14} color="var(--accent-cyan)" /> Local Ollama
-              </span>
+            <div className="flex items-center justify-between border-t border-outline-variant pt-2 px-2">
+              <div className="flex gap-3 text-on-surface-variant text-xs items-center">
+                <span className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm text-success">verified_user</span>
+                  Read-Only Guard
+                </span>
+                <span>•</span>
+                <span className="flex items-center gap-1">
+                  <span className="material-symbols-outlined text-sm text-primary">psychology</span>
+                  Local Ollama
+                </span>
+              </div>
+
+              <button
+                className="bg-primary text-on-primary px-4 py-1.5 rounded-lg font-body text-sm font-semibold flex items-center gap-2 hover:bg-primary-fixed transition-colors"
+                onClick={() => handleAskQuestion()}
+                disabled={analyzing}
+              >
+                {analyzing ? 'Analyzing...' : 'Analyze'}
+                <span className="material-symbols-outlined text-sm">send</span>
+              </button>
             </div>
-
-            <button className="btn-primary" onClick={() => handleAskQuestion()} disabled={analyzing}>
-              {analyzing ? 'Analyzing Plan...' : 'Analyze →'}
-            </button>
           </div>
         </div>
 
         {/* Suggested Chips */}
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem', marginTop: '1.25rem', flexWrap: 'wrap' }}>
+        <div className="flex flex-wrap items-center justify-center gap-2 mt-4">
           {[
-            { label: 'Top products & categories', q: 'Which category or region generated highest metrics?' },
-            { label: 'Revenue & trend summary', q: 'How many total records exist in this dataset?' },
-            { label: 'Compare metrics & averages', q: 'What is the average value for numeric columns?' },
-            { label: 'Find unusual patterns', q: 'Find top 5 records ordered by values' },
+            { icon: 'star', label: 'Top products', q: 'Which category or region generated highest metrics?' },
+            { icon: 'trending_up', label: 'Revenue trend', q: 'How many total records exist in this dataset?' },
+            { icon: 'map', label: 'Regional performance', q: 'What is the average value for numeric columns?' },
+            { icon: 'query_stats', label: 'Why did revenue decline?', q: 'Find top 5 records ordered by values' },
           ].map((chip, idx) => (
             <button
               key={idx}
-              className="badge-pill"
-              style={{ cursor: 'pointer', padding: '0.4rem 0.85rem', fontSize: '0.8rem' }}
+              className="px-3 py-1.5 rounded-full bg-surface-container border border-outline-variant text-on-surface-variant font-label text-xs hover:bg-surface-container-high hover:text-on-surface transition-colors flex items-center gap-1 cursor-pointer"
               onClick={() => handleAskQuestion(chip.q)}
             >
+              <span className="material-symbols-outlined text-[14px]">{chip.icon}</span>
               {chip.label}
             </button>
           ))}
         </div>
       </div>
 
-      {/* Error Banner */}
+      {/* Error Alert */}
       {error && (
-        <div className="glass-panel" style={{ borderLeft: '4px solid var(--accent-danger)', background: 'rgba(255, 107, 107, 0.1)', color: 'var(--accent-danger)', padding: '1rem' }}>
+        <div className="w-full bg-error-container/20 border-l-4 border-danger p-4 rounded text-danger mb-6">
           ⚠️ {error}
         </div>
       )}
 
-      {/* Analysis Result Section */}
+      {/* Analysis Result Display */}
       {currentAnalysis && (
-        <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-          {/* AI Evidence & Explanation Card */}
-          <div className="glass-panel" style={{ padding: '1.5rem', borderLeft: '4px solid var(--accent-primary)' }}>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.85rem' }}>
-              <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <span className="badge-pill badge-purple">INTENT: {currentAnalysis.intent.toUpperCase()}</span>
-                <span className="badge-pill badge-emerald">✓ VALIDATION: {currentAnalysis.validation_status}</span>
+        <div className="w-full flex flex-col gap-6 text-left">
+          {/* AI Evidence Card */}
+          <div className="bg-surface-container border-l-4 border-primary border border-outline-variant p-6 rounded-lg">
+            <div className="flex justify-between items-center mb-3">
+              <div className="flex gap-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-primary/20 text-primary text-xs font-semibold">
+                  INTENT: {currentAnalysis.intent.toUpperCase()}
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-success/20 text-success text-xs font-semibold">
+                  ✓ VALIDATION: {currentAnalysis.validation_status}
+                </span>
               </div>
-              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>
-                Model: <code style={{ color: 'var(--accent-cyan)' }}>{currentAnalysis.model_identifier}</code> | {currentAnalysis.execution_time_ms} ms
+              <div className="text-xs text-on-surface-variant">
+                Model: <code className="text-primary">{currentAnalysis.model_identifier}</code> | {currentAnalysis.execution_time_ms} ms
               </div>
             </div>
 
-            <h3 style={{ fontSize: '1.2rem', color: 'var(--text-primary)', marginBottom: '0.5rem' }}>
-              Q: "{currentAnalysis.question}"
-            </h3>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', lineHeight: '1.6', marginBottom: '1.25rem' }}>
+            <h3 className="text-xl font-bold text-on-surface mb-2">Q: "{currentAnalysis.question}"</h3>
+            <p className="text-on-surface-variant text-sm mb-4 leading-relaxed">
               💡 <strong>AI Explanation:</strong> {currentAnalysis.explanation}
             </p>
 
             {/* Validated DuckDB SQL Pane */}
-            <div style={{ background: 'var(--bg-darker)', padding: '1rem', borderRadius: '8px', border: '1px solid var(--border-subtle)', marginBottom: '1rem' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--accent-cyan)', textTransform: 'uppercase', marginBottom: '0.35rem', fontWeight: 600 }}>
-                Validated DuckDB SQL Query
-              </div>
-              <code style={{ fontFamily: 'var(--font-mono)', fontSize: '0.9rem', color: 'var(--text-primary)' }}>
-                {currentAnalysis.generated_sql}
-              </code>
+            <div className="bg-surface-container-lowest p-3 rounded border border-outline-variant mb-4">
+              <div className="text-xs text-primary font-semibold uppercase mb-1">Validated DuckDB SQL Query</div>
+              <code className="font-code text-sm text-on-surface">{currentAnalysis.generated_sql}</code>
             </div>
 
-            {/* Action Bar */}
-            <div style={{ display: 'flex', justifyContent: 'flex-end' }}>
+            <div className="flex justify-end">
               <button
-                className="btn-secondary"
-                style={{ fontSize: '0.85rem' }}
+                className="bg-surface-container-high hover:bg-surface-variant text-on-surface text-xs font-semibold py-1.5 px-3 rounded flex items-center gap-1.5 transition-colors"
                 onClick={() => handleRerun(currentAnalysis.id)}
                 disabled={analyzing}
               >
-                <IconRefresh size={14} /> Re-run Analysis (Verify Reproducibility)
+                <span className="material-symbols-outlined text-[16px]">refresh</span>
+                Re-run Analysis (Verify Reproducibility)
               </button>
             </div>
           </div>
 
-          {/* Interactive Chart Viewer */}
+          {/* Interactive Visualization Chart */}
           <ChartViewer datasetId={datasetId} datasetName={datasetName} />
 
           {/* Evidence Data Table */}
           {currentAnalysis.execution_result && (
-            <div className="glass-panel" style={{ padding: '1.5rem' }}>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h4 style={{ color: 'var(--text-primary)', fontSize: '1.05rem' }}>Evidence Result Data Table</h4>
-                <span className="badge-pill badge-cyan">
+            <div className="bg-surface-container border border-outline-variant p-6 rounded-lg">
+              <div className="flex justify-between items-center mb-4">
+                <h4 className="font-semibold text-on-surface">Evidence Result Data Table</h4>
+                <span className="text-xs text-primary font-semibold">
                   {currentAnalysis.execution_result.returned_rows} rows returned
                 </span>
               </div>
 
-              <div style={{ overflowX: 'auto', maxHeight: '350px' }}>
+              <div className="overflow-x-auto max-h-[350px]">
                 <table className="data-table">
                   <thead>
                     <tr>
@@ -263,7 +251,7 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
                   <tbody>
                     {currentAnalysis.execution_result.rows.map((row, rIdx) => (
                       <tr key={rIdx}>
-                        <td style={{ color: 'var(--text-muted)' }}>{rIdx + 1}</td>
+                        <td className="text-on-surface-variant">{rIdx + 1}</td>
                         {currentAnalysis.execution_result.columns.map((col, cIdx) => (
                           <td key={cIdx}>{row[col] !== undefined && row[col] !== null ? String(row[col]) : ''}</td>
                         ))}
@@ -275,30 +263,23 @@ export const AnalystWorkspace: React.FC<AnalystWorkspaceProps> = ({ projectId, d
             </div>
           )}
 
-          {/* Analysis History Side/Bottom List */}
+          {/* Analysis History List */}
           {history.length > 1 && (
-            <div className="glass-panel" style={{ padding: '1.25rem' }}>
-              <h4 style={{ color: 'var(--text-primary)', marginBottom: '0.75rem', fontSize: '1rem' }}>
-                Analysis Execution History ({history.length})
-              </h4>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <div className="bg-surface-container border border-outline-variant p-4 rounded-lg">
+              <h4 className="font-semibold text-on-surface text-sm mb-3">Analysis Execution History ({history.length})</h4>
+              <div className="flex flex-col gap-2">
                 {history.map((item) => (
                   <div
                     key={item.id}
-                    style={{
-                      padding: '0.65rem 0.85rem',
-                      background: currentAnalysis?.id === item.id ? 'rgba(140, 128, 255, 0.15)' : 'var(--surface-container)',
-                      borderRadius: '8px',
-                      cursor: 'pointer',
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      fontSize: '0.85rem',
-                    }}
+                    className={`p-3 rounded flex justify-between items-center cursor-pointer text-xs transition-colors ${
+                      currentAnalysis?.id === item.id ? 'bg-primary/20 text-primary font-semibold' : 'bg-surface-container-low hover:bg-surface-container-high text-on-surface'
+                    }`}
                     onClick={() => setCurrentAnalysis(item)}
                   >
-                    <span style={{ color: 'var(--text-primary)' }}>"{item.question}"</span>
-                    <span className="badge-pill badge-purple" style={{ fontSize: '0.7rem' }}>{item.intent.toUpperCase()}</span>
+                    <span>"{item.question}"</span>
+                    <span className="px-2 py-0.5 rounded bg-primary/20 text-primary uppercase text-[10px]">
+                      {item.intent}
+                    </span>
                   </div>
                 ))}
               </div>

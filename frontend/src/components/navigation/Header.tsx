@@ -1,5 +1,4 @@
 import React from 'react';
-import { IconSearch, IconRefresh } from '../ui/Icons';
 
 interface Project {
   id: string;
@@ -25,112 +24,67 @@ export const Header: React.FC<HeaderProps> = ({
   onRefresh,
 }) => {
   return (
-    <header
-      style={{
-        position: 'fixed',
-        top: 0,
-        right: 0,
-        width: 'calc(100% - var(--sidebar-width))',
-        height: 'var(--header-height)',
-        background: 'rgba(12, 20, 30, 0.85)',
-        backdropFilter: 'blur(16px)',
-        WebkitBackdropFilter: 'blur(16px)',
-        borderBottom: '1px solid var(--border-subtle)',
-        zIndex: 20,
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        padding: '0 1.5rem',
-      }}
-    >
+    <header className="fixed top-0 right-0 w-[calc(100%-240px)] h-16 bg-surface/80 backdrop-blur-md border-b border-outline-variant z-10 flex justify-between items-center px-6 transition-all duration-200">
       {/* Project Selector Breadcrumb */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-        <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>Workspace:</span>
+      <div className="flex items-center gap-4 h-full">
         {projects.length > 0 ? (
           <select
-            className="form-input"
-            style={{
-              padding: '0.4rem 0.85rem',
-              fontSize: '0.85rem',
-              width: 'auto',
-              minWidth: '200px',
-              cursor: 'pointer',
-            }}
+            className="bg-surface-container border border-outline-variant rounded py-1.5 px-3 font-body text-sm text-on-surface focus:outline-none focus:border-primary cursor-pointer"
             value={selectedProjectId || ''}
             onChange={(e) => onSelectProject(e.target.value)}
           >
             {projects.map((p) => (
               <option key={p.id} value={p.id}>
-                {p.name} ({p.dataset_count} datasets)
+                Workspace: {p.name} ({p.dataset_count} datasets)
               </option>
             ))}
           </select>
         ) : (
-          <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>No projects created yet</span>
+          <span className="font-body text-sm text-on-surface-variant">No projects created yet</span>
         )}
       </div>
 
       {/* Right Action Bar & Search */}
-      <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-        {/* Global Search Bar */}
-        <div style={{ position: 'relative' }}>
+      <div className="flex items-center gap-4">
+        {/* Global Search Input */}
+        <div className="relative">
+          <span className="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-sm">
+            search
+          </span>
           <input
             type="text"
-            className="form-input"
-            placeholder="Search datasets, SQL, insights..."
-            style={{
-              paddingLeft: '2.2rem',
-              width: '220px',
-              fontSize: '0.8rem',
-              borderRadius: '9999px',
-            }}
+            className="bg-surface-container border border-outline-variant rounded-full py-1.5 pl-9 pr-4 font-body text-sm text-on-surface focus:outline-none focus:border-primary w-48 transition-all placeholder:text-on-surface-variant"
+            placeholder="Search..."
           />
-          <span
-            style={{
-              position: 'absolute',
-              left: '0.75rem',
-              top: '50%',
-              transform: 'translateY(-50%)',
-              display: 'flex',
-              alignItems: 'center',
-              color: 'var(--text-muted)',
-            }}
-          >
-            <IconSearch size={14} />
-          </span>
         </div>
 
-        {/* Backend & Ollama Telemetry Status Badge */}
-        <div
-          className="badge-pill"
-          style={{
-            borderColor: loadingBackend
-              ? 'var(--accent-warning)'
-              : backendHealthy
-              ? 'rgba(16, 185, 129, 0.4)'
-              : 'rgba(255, 107, 107, 0.4)',
-          }}
-        >
+        {/* Telemetry Status Badge */}
+        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-surface-container border border-outline-variant text-xs font-semibold">
           <span
-            style={{
-              width: '8px',
-              height: '8px',
-              borderRadius: '50%',
-              background: loadingBackend
-                ? 'var(--accent-warning)'
-                : backendHealthy
-                ? 'var(--accent-emerald)'
-                : 'var(--accent-danger)',
-              boxShadow: backendHealthy ? '0 0 10px var(--accent-emerald)' : 'none',
-            }}
+            className={`w-2 h-2 rounded-full ${
+              loadingBackend ? 'bg-tertiary animate-pulse' : backendHealthy ? 'bg-success' : 'bg-danger'
+            }`}
           />
-          <span style={{ color: 'var(--text-primary)' }}>
+          <span className="text-on-surface">
             {loadingBackend ? 'Connecting...' : backendHealthy ? 'Ollama & DuckDB Ready' : 'Offline'}
           </span>
         </div>
 
-        <button className="btn-secondary" style={{ padding: '0.4rem 0.75rem', fontSize: '0.8rem' }} onClick={onRefresh}>
-          <IconRefresh size={14} /> Refresh
+        <button
+          className="text-on-surface-variant hover:text-on-surface transition-colors p-1"
+          title="Refresh Workspace"
+          onClick={onRefresh}
+        >
+          <span className="material-symbols-outlined text-[20px]">refresh</span>
+        </button>
+
+        <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1" title="Help">
+          <span className="material-symbols-outlined text-[20px]">help</span>
+        </button>
+
+        <button className="text-on-surface-variant hover:text-on-surface transition-colors p-1 relative" title="Notifications">
+          <span className="material-symbols-outlined text-[20px]">notifications</span>
+          <span className="absolute top-0 right-0 w-2 h-2 bg-danger rounded-full" />
         </button>
       </div>
     </header>
