@@ -1,52 +1,114 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
+import { ProjectModal } from './components/ProjectModal';
+import { DatasetUpload } from './components/DatasetUpload';
+import { DatasetPreview } from './components/DatasetPreview';
 
-interface BackendHealth {
-  status: string;
-  service: string;
-  environment: string;
+interface Project {
+  id: string;
+  name: string;
+  description?: string;
+  created_at: string;
+  dataset_count: number;
 }
 
-interface BackendRoot {
-  status: string;
-  app: string;
-  environment: string;
-  version: string;
+interface Dataset {
+  id: string;
+  project_id: string;
+  name: string;
+  file_type: string;
+  file_size_bytes: number;
+  created_at: string;
+  latest_version?: {
+    row_count: number;
+    column_count: number;
+    columns: any[];
+  };
 }
 
 export default function App() {
-  const [health, setHealth] = useState<BackendHealth | null>(null);
-  const [rootInfo, setRootInfo] = useState<BackendRoot | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [datasets, setDatasets] = useState<Dataset[]>([]);
+  const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
+  const [previewData, setPreviewData] = useState<any>(null);
+  
+  const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
+  const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [loadingPreview, setLoadingPreview] = useState<boolean>(false);
 
-  const checkBackendHealth = async () => {
-    setLoading(true);
-    setError(null);
+  const fetchProjects = useCallback(async () => {
     try {
-      const [healthRes, rootRes] = await Promise.all([
-        fetch('http://127.0.0.1:8000/health'),
-        fetch('http://127.0.0.1:8000/'),
-      ]);
-
-      if (!healthRes.ok || !rootRes.ok) {
-        throw new Error('Backend responded with error status');
+      const res = await fetch('http://127.0.0.1:8000/api/v1/projects');
+      if (res.ok) {
+        const data = await res.json();
+        setProjects(data);
+        setBackendHealthy(true);
+        if (data.length > 0 && !selectedProjectId) {
+          setSelectedProjectId(data[0].id);
+        }
       }
-
-      const healthData: BackendHealth = await healthRes.json();
-      const rootData: BackendRoot = await rootRes.json();
-
-      setHealth(healthData);
-      setRootInfo(rootData);
-    } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to connect to DataMind API');
+    } catch {
+      setBackendHealthy(false);
     } finally {
-      setLoading(false);
+      setLoadingBackend(false);
+    }
+  }, [selectedProjectId]);
+
+  const fetchProjectDatasets = useCallback(async (projId: string) => {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/v1/projects/${projId}/datasets`);
+      if (res.ok) {
+        const data = await res.json();
+        setDatasets(data);
+        if (data.length > 0) {
+          handleSelectDataset(data[0]);
+        } else {
+          setSelectedDataset(null);
+          setPreviewData(null);
+        }
+      }
+    } catch (err) {
+      console.error('Failed to fetch datasets:', err);
+    }
+  }, []);
+
+  const handleSelectDataset = async (dataset: Dataset) => {
+    setSelectedDataset(dataset);
+    setLoadingPreview(true);
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/v1/datasets/${dataset.id}/preview`);
+      if (res.ok) {
+        const preview = await res.json();
+        setPreviewData(preview);
+      }
+    } catch (err) {
+      console.error('Failed to fetch dataset preview:', err);
+    } finally {
+      setLoadingPreview(false);
     }
   };
 
   useEffect(() => {
-    checkBackendHealth();
-  }, []);
+    fetchProjects();
+  }, [fetchProjects]);
+
+  useEffect(() => {
+    if (selectedProjectId) {
+      fetchProjectDatasets(selectedProjectId);
+    }
+  }, [selectedProjectId, fetchProjectDatasets]);
+
+  const handleProjectCreated = (newProj: Project) => {
+    setProjects((prev) => [newProj, ...prev]);
+    setSelectedProjectId(newProj.id);
+  };
+
+  const handleUploadSuccess = (newDataset: Dataset) => {
+    setDatasets((prev) => [newDataset, ...prev]);
+    handleSelectDataset(newDataset);
+    fetchProjects();
+  };
 
   return (
     <div className="app-container">
@@ -56,7 +118,7 @@ export default function App() {
           <div className="brand-logo">DM</div>
           <div>
             <span className="brand-title">DataMind</span>
-            <span className="brand-badge" style={{ marginLeft: '8px' }}>MVP</span>
+            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 1</span>
           </div>
         </div>
 
@@ -64,156 +126,123 @@ export default function App() {
           <div className="status-badge">
             <span
               className={`status-indicator ${
-                loading ? 'loading' : health ? 'healthy' : 'offline'
+                loadingBackend ? 'loading' : backendHealthy ? 'healthy' : 'offline'
               }`}
             />
             <span>
-              {loading
+              {loadingBackend
                 ? 'Connecting...'
-                : health
-                ? 'Backend Connected'
+                : backendHealthy
+                ? 'Backend Ready'
                 : 'Backend Disconnected'}
             </span>
           </div>
-          <button className="btn btn-secondary" onClick={checkBackendHealth}>
-            Refresh Status
+          <button className="btn btn-secondary" onClick={fetchProjects}>
+            Refresh API
           </button>
         </div>
       </header>
 
-      {/* Main Content Area */}
+      {/* Main Content */}
       <main className="main-content">
-        {/* Hero Banner */}
-        <section className="hero-section">
-          <h1 className="hero-title">
-            Local-First <span className="gradient-text">AI Data Analyst</span>
-          </h1>
-          <p className="hero-subtitle">
-            Convert natural-language questions into reproducible, evidence-backed data analysis
-            with zero mandatory cloud dependencies and strict execution safety.
-          </p>
-        </section>
-
-        {/* Philosophy Banner */}
-        <div className="principle-banner">
-          <div className="principle-icon">🔒</div>
-          <div className="principle-content">
-            <h3>Core Execution Principle</h3>
-            <p>
-              <em>"Let AI plan and explain analysis, while deterministic tools execute and validate the actual computation."</em>
-            </p>
-          </div>
-        </div>
-
-        {/* Phase 0 Telemetry Cards */}
-        <div className="dashboard-grid">
-          {/* Card 1: Backend API Telemetry */}
-          <div className="glass-card card">
-            <div className="card-header">
-              <h2 className="card-title">
-                <span className="card-icon">⚡</span> FastAPI Backend Status
-              </h2>
-              <span className={`status-badge`}>
-                {health ? health.status.toUpperCase() : 'OFFLINE'}
-              </span>
-            </div>
-
-            {loading ? (
-              <p style={{ color: 'var(--text-muted)' }}>Checking backend health...</p>
-            ) : error ? (
-              <div style={{ color: '#f87171', fontSize: '0.9rem' }}>
-                <p>⚠️ Could not connect to FastAPI at http://127.0.0.1:8000</p>
-                <p style={{ fontSize: '0.8rem', marginTop: '4px', color: 'var(--text-muted)' }}>
-                  Start server with: <code>cd backend && uvicorn app.main:app --reload</code>
-                </p>
-              </div>
+        {/* Action Header */}
+        <div className="action-row">
+          <div className="project-select">
+            <label style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Active Workspace:</label>
+            {projects.length > 0 ? (
+              <select
+                className="select-dropdown"
+                value={selectedProjectId || ''}
+                onChange={(e) => setSelectedProjectId(e.target.value)}
+              >
+                {projects.map((p) => (
+                  <option key={p.id} value={p.id}>
+                    {p.name} ({p.dataset_count} datasets)
+                  </option>
+                ))}
+              </select>
             ) : (
-              <div className="info-list">
-                <div className="info-item">
-                  <span className="info-label">App Name</span>
-                  <span className="info-value">{rootInfo?.app}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Version</span>
-                  <span className="info-value">v{rootInfo?.version}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Environment</span>
-                  <span className="info-value">{rootInfo?.environment}</span>
-                </div>
-                <div className="info-item">
-                  <span className="info-label">Health Check</span>
-                  <span className="info-value" style={{ color: 'var(--accent-green)' }}>
-                    /health (200 OK)
-                  </span>
-                </div>
-              </div>
+              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No projects created yet</span>
             )}
           </div>
 
-          {/* Card 2: Environment & Foundation Stack */}
-          <div className="glass-card card">
-            <div className="card-header">
-              <h2 className="card-title">
-                <span className="card-icon">🛠️</span> System Stack
-              </h2>
-              <span className="brand-badge">Phase 0</span>
-            </div>
-            <div className="info-list">
-              <div className="info-item">
-                <span className="info-label">Frontend Framework</span>
-                <span className="info-value">React 18 + TypeScript</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Build Tool</span>
-                <span className="info-value">Vite 5</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Backend Runtime</span>
-                <span className="info-value">Python 3.10.11</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Analytical Engine</span>
-                <span className="info-value">DuckDB + Pandas</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Card 3: Phase 0 Verification Checklist */}
-          <div className="glass-card card">
-            <div className="card-header">
-              <h2 className="card-title">
-                <span className="card-icon">📋</span> Phase 0 Criteria
-              </h2>
-              <span style={{ color: 'var(--accent-green)', fontWeight: 600, fontSize: '0.85rem' }}>
-                4 / 4 Verified
-              </span>
-            </div>
-            <div className="info-list">
-              <div className="info-item">
-                <span className="info-label">Repository & Git</span>
-                <span className="info-value" style={{ color: 'var(--accent-green)' }}>✓ Ready</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">FastAPI Endpoints</span>
-                <span className="info-value" style={{ color: 'var(--accent-green)' }}>✓ Configured</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Frontend Web App</span>
-                <span className="info-value" style={{ color: 'var(--accent-green)' }}>✓ Rendered</span>
-              </div>
-              <div className="info-item">
-                <span className="info-label">Unit Tests (Pytest)</span>
-                <span className="info-value" style={{ color: 'var(--accent-green)' }}>✓ Passing</span>
-              </div>
-            </div>
-          </div>
+          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+            + New Project
+          </button>
         </div>
+
+        {/* Ingestion & Dataset Section */}
+        {selectedProjectId ? (
+          <div>
+            <DatasetUpload projectId={selectedProjectId} onUploadSuccess={handleUploadSuccess} />
+
+            {/* Ingested Datasets List */}
+            {datasets.length > 0 && (
+              <div style={{ marginTop: '2rem' }}>
+                <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>
+                  Workspace Datasets ({datasets.length})
+                </h3>
+                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
+                  {datasets.map((ds) => (
+                    <div
+                      key={ds.id}
+                      className="glass-card card"
+                      style={{
+                        cursor: 'pointer',
+                        borderColor: selectedDataset?.id === ds.id ? 'var(--accent-cyan)' : 'var(--border-color)',
+                      }}
+                      onClick={() => handleSelectDataset(ds)}
+                    >
+                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+                        <strong style={{ color: 'var(--text-primary)' }}>{ds.name}</strong>
+                        <span className="brand-badge" style={{ fontSize: '0.65rem' }}>{ds.file_type.toUpperCase()}</span>
+                      </div>
+                      <div className="info-list" style={{ gap: '0.4rem', fontSize: '0.8rem' }}>
+                        <div className="info-item">
+                          <span className="info-label">Size</span>
+                          <span className="info-value">{(ds.file_size_bytes / 1024).toFixed(1)} KB</span>
+                        </div>
+                        {ds.latest_version && (
+                          <div className="info-item">
+                            <span className="info-label">Rows × Cols</span>
+                            <span className="info-value">
+                              {ds.latest_version.row_count} × {ds.latest_version.column_count}
+                            </span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+
+                {/* Dataset Preview Section */}
+                <DatasetPreview dataset={selectedDataset} previewData={previewData} loading={loadingPreview} />
+              </div>
+            )}
+          </div>
+        ) : (
+          <div className="glass-card card" style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
+            <h3 style={{ marginBottom: '0.75rem', color: 'var(--text-primary)' }}>Get Started by Creating a Project</h3>
+            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', maxWidth: '500px', margin: '0 auto 1.5rem' }}>
+              Create an analytical workspace to upload and profile CSV, Excel, JSON, and Parquet data files.
+            </p>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+              + Create First Project
+            </button>
+          </div>
+        )}
       </main>
+
+      {/* New Project Modal */}
+      <ProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onProjectCreated={handleProjectCreated}
+      />
 
       {/* Footer */}
       <footer>
-        <p>DataMind Local AI Data Analyst &copy; 2026. Built with FastAPI, DuckDB, React, and Ollama.</p>
+        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 1 — Dataset Ingestion Engine Verified.</p>
       </footer>
     </div>
   );
