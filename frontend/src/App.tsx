@@ -1,11 +1,13 @@
 import { useState, useEffect, useCallback } from 'react';
+import { Sidebar } from './components/navigation/Sidebar';
+import { Header } from './components/navigation/Header';
+import { OverviewDashboard } from './components/overview/OverviewDashboard';
+import { DatasetExplorer } from './components/datasets/DatasetExplorer';
+import { AnalystWorkspace } from './components/analyst/AnalystWorkspace';
+import { InsightsView } from './components/insights/InsightsView';
+import { ReportsView } from './components/reports/ReportsView';
+import { SettingsView } from './components/settings/SettingsView';
 import { ProjectModal } from './components/ProjectModal';
-import { DatasetUpload } from './components/DatasetUpload';
-import { DatasetPreview } from './components/DatasetPreview';
-import { DatasetProfileView } from './components/DatasetProfile';
-import { SQLConsole } from './components/SQLConsole';
-import { AnalystChat } from './components/AnalystChat';
-import { ChartViewer } from './components/ChartViewer';
 import { LegalModal } from './components/LegalModal';
 
 interface Project {
@@ -35,14 +37,12 @@ export default function App() {
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
-  const [previewData, setPreviewData] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'chat' | 'profile' | 'preview' | 'sql' | 'chart'>('chat');
+  
+  const [activeTab, setActiveTab] = useState<'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'settings'>('analyst');
   
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [loadingPreview, setLoadingPreview] = useState<boolean>(false);
-  
+  const [isProjectModalOpen, setIsProjectModalOpen] = useState<boolean>(false);
   const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | null>(null);
 
   const fetchProjects = useCallback(async () => {
@@ -70,32 +70,15 @@ export default function App() {
         const data = await res.json();
         setDatasets(data);
         if (data.length > 0) {
-          handleSelectDataset(data[0]);
+          setSelectedDataset(data[0]);
         } else {
           setSelectedDataset(null);
-          setPreviewData(null);
         }
       }
     } catch (err) {
       console.error('Failed to fetch datasets:', err);
     }
   }, []);
-
-  const handleSelectDataset = async (dataset: Dataset) => {
-    setSelectedDataset(dataset);
-    setLoadingPreview(true);
-    try {
-      const res = await fetch(`http://127.0.0.1:8000/api/v1/datasets/${dataset.id}/preview`);
-      if (res.ok) {
-        const preview = await res.json();
-        setPreviewData(preview);
-      }
-    } catch (err) {
-      console.error('Failed to fetch dataset preview:', err);
-    } finally {
-      setLoadingPreview(false);
-    }
-  };
 
   useEffect(() => {
     fetchProjects();
@@ -114,218 +97,139 @@ export default function App() {
 
   const handleUploadSuccess = (newDataset: Dataset) => {
     setDatasets((prev) => [newDataset, ...prev]);
-    handleSelectDataset(newDataset);
+    setSelectedDataset(newDataset);
     fetchProjects();
   };
 
   return (
-    <div className="app-container">
-      {/* Navigation Header */}
-      <header className="navbar">
-        <div className="brand">
-          <div className="brand-logo">DM</div>
-          <div>
-            <span className="brand-title">DataMind</span>
-            <span className="brand-badge" style={{ marginLeft: '8px' }}>Local AI</span>
-          </div>
-        </div>
+    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', background: 'var(--bg-dark)' }}>
+      {/* Left Sidebar Navigation (240px) */}
+      <Sidebar
+        activeTab={activeTab}
+        setActiveTab={setActiveTab}
+        onNewProject={() => setIsProjectModalOpen(true)}
+      />
 
-        <div className="nav-status">
-          <div className="status-badge">
-            <span
-              className={`status-indicator ${
-                loadingBackend ? 'loading' : backendHealthy ? 'healthy' : 'offline'
-              }`}
-            />
-            <span>
-              {loadingBackend
-                ? 'Connecting...'
-                : backendHealthy
-                ? 'Backend & Ollama Ready'
-                : 'Backend Disconnected'}
-            </span>
-          </div>
-          <button className="btn btn-secondary" onClick={fetchProjects}>
-            Refresh API
-          </button>
-        </div>
-      </header>
+      {/* Top Header Bar */}
+      <Header
+        projects={projects}
+        selectedProjectId={selectedProjectId}
+        onSelectProject={setSelectedProjectId}
+        backendHealthy={backendHealthy}
+        loadingBackend={loadingBackend}
+        onRefresh={fetchProjects}
+      />
 
-      {/* Main Content */}
-      <main className="main-content">
-        {/* Action Header */}
-        <div className="action-row">
-          <div className="project-select">
-            <label style={{ color: 'var(--text-secondary)', fontWeight: 500 }}>Active Workspace:</label>
-            {projects.length > 0 ? (
-              <select
-                className="select-dropdown"
-                value={selectedProjectId || ''}
-                onChange={(e) => setSelectedProjectId(e.target.value)}
-              >
-                {projects.map((p) => (
-                  <option key={p.id} value={p.id}>
-                    {p.name} ({p.dataset_count} datasets)
-                  </option>
-                ))}
-              </select>
-            ) : (
-              <span style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>No projects created yet</span>
-            )}
-          </div>
+      {/* Main Workspace Area */}
+      <main
+        style={{
+          marginLeft: 'var(--sidebar-width)',
+          marginTop: 'var(--header-height)',
+          width: 'calc(100vw - var(--sidebar-width))',
+          height: 'calc(100vh - var(--header-height))',
+          overflowY: 'auto',
+          position: 'relative',
+          padding: '2rem',
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+        }}
+      >
+        {/* Ambient Grid Pattern */}
+        <div className="bg-ambient-pattern" />
 
-          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-            + New Project
-          </button>
-        </div>
-
-        {/* Ingestion & Dataset Section */}
-        {selectedProjectId ? (
-          <div>
-            <DatasetUpload projectId={selectedProjectId} onUploadSuccess={handleUploadSuccess} />
-
-            {/* Ingested Datasets List */}
-            {datasets.length > 0 && (
-              <div style={{ marginTop: '2rem' }}>
-                <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>
-                  Workspace Datasets ({datasets.length})
-                </h3>
-                <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))', gap: '1rem' }}>
-                  {datasets.map((ds) => (
-                    <div
-                      key={ds.id}
-                      className="glass-card card"
-                      style={{
-                        cursor: 'pointer',
-                        borderColor: selectedDataset?.id === ds.id ? 'var(--accent-cyan)' : 'var(--border-color)',
-                      }}
-                      onClick={() => handleSelectDataset(ds)}
-                    >
-                      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
-                        <strong style={{ color: 'var(--text-primary)' }}>{ds.name}</strong>
-                        <span className="brand-badge" style={{ fontSize: '0.65rem' }}>{ds.file_type.toUpperCase()}</span>
-                      </div>
-                      <div className="info-list" style={{ gap: '0.4rem', fontSize: '0.8rem' }}>
-                        <div className="info-item">
-                          <span className="info-label">Size</span>
-                          <span className="info-value">{(ds.file_size_bytes / 1024).toFixed(1)} KB</span>
-                        </div>
-                        {ds.latest_version && (
-                          <div className="info-item">
-                            <span className="info-label">Rows × Cols</span>
-                            <span className="info-value">
-                              {ds.latest_version.row_count} × {ds.latest_version.column_count}
-                            </span>
-                          </div>
-                        )}
-                      </div>
-                    </div>
-                  ))}
+        {/* Content View Routing */}
+        <div style={{ position: 'relative', zIndex: 1, flex: 1 }}>
+          {selectedProjectId ? (
+            activeTab === 'overview' ? (
+              <OverviewDashboard
+                datasets={datasets}
+                selectedDataset={selectedDataset}
+                onNavigateToAnalyst={() => setActiveTab('analyst')}
+                onNavigateToDatasets={() => setActiveTab('datasets')}
+              />
+            ) : activeTab === 'datasets' ? (
+              <DatasetExplorer
+                projectId={selectedProjectId}
+                datasets={datasets}
+                selectedDataset={selectedDataset}
+                onSelectDataset={setSelectedDataset}
+                onUploadSuccess={handleUploadSuccess}
+              />
+            ) : activeTab === 'analyst' ? (
+              selectedDataset ? (
+                <AnalystWorkspace
+                  projectId={selectedProjectId}
+                  datasetId={selectedDataset.id}
+                  datasetName={selectedDataset.name}
+                />
+              ) : (
+                <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
+                  <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.75rem' }}>Upload a Dataset to Begin</h3>
+                  <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                    Select or upload a CSV, XLSX, JSON, or Parquet dataset to activate AI query analysis.
+                  </p>
+                  <button className="btn-primary" onClick={() => setActiveTab('datasets')}>
+                    📁 Go to Dataset Ingestion →
+                  </button>
                 </div>
+              )
+            ) : activeTab === 'insights' ? (
+              <InsightsView datasetName={selectedDataset ? selectedDataset.name : 'Workspace'} />
+            ) : activeTab === 'reports' ? (
+              <ReportsView projectId={selectedProjectId} />
+            ) : (
+              <SettingsView />
+            )
+          ) : (
+            <div className="glass-panel" style={{ padding: '4rem 2rem', textAlign: 'center', maxWidth: '600px', margin: '2rem auto' }}>
+              <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', fontSize: '1.4rem' }}>
+                Welcome to DataMind
+              </h3>
+              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem', lineHeight: '1.6' }}>
+                Create your first analytical workspace to upload datasets and begin evidence-backed AI analysis.
+              </p>
+              <button className="btn-primary" style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }} onClick={() => setIsProjectModalOpen(true)}>
+                + Create First Workspace Project
+              </button>
+            </div>
+          )}
+        </div>
 
-                {/* View Tabs */}
-                {selectedDataset && (
-                  <div style={{ marginTop: '2rem' }}>
-                    <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
-                      <button
-                        className={`btn ${activeTab === 'chat' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setActiveTab('chat')}
-                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
-                      >
-                        💬 AI Analyst Chat
-                      </button>
-                      <button
-                        className={`btn ${activeTab === 'chart' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setActiveTab('chart')}
-                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
-                      >
-                        📈 Visualizations
-                      </button>
-                      <button
-                        className={`btn ${activeTab === 'profile' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setActiveTab('profile')}
-                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
-                      >
-                        📊 Quality Profile & Intelligence
-                      </button>
-                      <button
-                        className={`btn ${activeTab === 'preview' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setActiveTab('preview')}
-                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
-                      >
-                        🔍 Row Data Preview
-                      </button>
-                      <button
-                        className={`btn ${activeTab === 'sql' ? 'btn-primary' : 'btn-secondary'}`}
-                        onClick={() => setActiveTab('sql')}
-                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
-                      >
-                        ⚡ DuckDB SQL Console
-                      </button>
-                    </div>
-
-                    {activeTab === 'chat' ? (
-                      <AnalystChat projectId={selectedProjectId} datasetId={selectedDataset.id} datasetName={selectedDataset.name} />
-                    ) : activeTab === 'chart' ? (
-                      <ChartViewer datasetId={selectedDataset.id} datasetName={selectedDataset.name} />
-                    ) : activeTab === 'profile' ? (
-                      <DatasetProfileView datasetId={selectedDataset.id} />
-                    ) : activeTab === 'preview' ? (
-                      <DatasetPreview dataset={selectedDataset} previewData={previewData} loading={loadingPreview} />
-                    ) : (
-                      <SQLConsole datasetId={selectedDataset.id} datasetName={selectedDataset.name} />
-                    )}
-                  </div>
-                )}
-              </div>
-            )}
-          </div>
-        ) : (
-          <div className="glass-card card" style={{ padding: '3rem 1.5rem', textAlign: 'center' }}>
-            <h3 style={{ marginBottom: '0.75rem', color: 'var(--text-primary)' }}>Get Started by Creating a Project</h3>
-            <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem', maxWidth: '500px', margin: '0 auto 1.5rem' }}>
-              Create an analytical workspace to upload and profile CSV, Excel, JSON, and Parquet data files.
-            </p>
-            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-              + Create First Project
+        {/* Footer Bar */}
+        <footer style={{ position: 'relative', zIndex: 1, marginTop: '3rem', paddingTop: '1rem', borderTop: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '0.8rem', color: 'var(--text-muted)' }}>
+          <div>DataMind Local AI Data Analyst &copy; 2026. Impeccable Design & Evidence Engine.</div>
+          <div style={{ display: 'flex', gap: '1rem' }}>
+            <button
+              onClick={() => setLegalModalType('privacy')}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.8rem' }}
+            >
+              Privacy Policy
+            </button>
+            <span>•</span>
+            <button
+              onClick={() => setLegalModalType('terms')}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.8rem' }}
+            >
+              Terms & Conditions
             </button>
           </div>
-        )}
+        </footer>
       </main>
 
       {/* New Project Modal */}
       <ProjectModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
+        isOpen={isProjectModalOpen}
+        onClose={() => setIsProjectModalOpen(false)}
         onProjectCreated={handleProjectCreated}
       />
 
-      {/* Legal Policy Modal */}
+      {/* Legal Modal */}
       <LegalModal
         isOpen={legalModalType !== null}
         type={legalModalType}
         onClose={() => setLegalModalType(null)}
       />
-
-      {/* Footer with Legal Links */}
-      <footer>
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginBottom: '0.5rem' }}>
-          <button
-            onClick={() => setLegalModalType('privacy')}
-            style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.85rem' }}
-          >
-            Privacy Policy
-          </button>
-          <span style={{ color: 'var(--text-muted)' }}>•</span>
-          <button
-            onClick={() => setLegalModalType('terms')}
-            style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.85rem' }}
-          >
-            Terms & Conditions
-          </button>
-        </div>
-        <p>DataMind Local AI Data Analyst &copy; 2026. Local-First & Verifiable Evidence Engine.</p>
-      </footer>
     </div>
   );
 }
