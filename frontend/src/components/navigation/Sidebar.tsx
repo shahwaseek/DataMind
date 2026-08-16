@@ -1,4 +1,5 @@
 import React from 'react';
+import Image from 'next/image';
 
 interface SidebarProps {
   activeTab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'evaluation' | 'settings';
@@ -18,16 +19,19 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
 
   return (
     <nav className="fixed left-0 top-0 h-full w-[240px] bg-surface-container border-r border-outline-variant z-20 flex flex-col py-6 transition-colors duration-200 ease-in-out">
-      {/* Brand Header */}
+      {/* 3D Brand Header */}
       <div className="px-6 mb-6 flex items-center gap-3">
-        <div className="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container">
-          <span className="material-symbols-outlined text-[20px]" style={{ fontVariationSettings: "'FILL' 1" }}>
-            analytics
-          </span>
+        <div className="relative w-9 h-9 rounded-lg overflow-hidden hardware-border hardware-glow">
+          <Image
+            src="/logo_3d.jpg"
+            alt="DataMind 3D Logo"
+            fill
+            className="object-cover"
+          />
         </div>
         <div>
           <h1 className="font-display font-bold text-lg text-primary leading-tight">DataMind</h1>
-          <p className="font-body text-xs text-on-surface-variant">Local-first AI Analyst</p>
+          <p className="font-body text-[10px] text-on-surface-variant uppercase font-semibold tracking-wider">Local AI Analyst</p>
         </div>
       </div>
 

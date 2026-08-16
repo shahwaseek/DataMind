@@ -1,5 +1,5 @@
 import React from 'react';
-import { IconBrain } from '@/components/ui/Icons';
+import Image from 'next/image';
 
 interface LandingPageProps {
   onTryDataMind: () => void;
@@ -15,37 +15,37 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryDataMind, onLogin
           position: 'sticky',
           top: 0,
           zIndex: 40,
-          height: '64px',
-          background: 'rgba(19, 18, 27, 0.9)',
-          backdropFilter: 'blur(12px)',
+          height: '72px',
+          background: 'rgba(11, 13, 16, 0.85)',
+          backdropFilter: 'blur(16px)',
           borderBottom: '1px solid #1A1D21',
           display: 'flex',
           justifyContent: 'space-between',
           alignItems: 'center',
-          padding: '0 2rem',
+          padding: '0 2.5rem',
         }}
       >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <div
-            style={{
-              width: '32px',
-              height: '32px',
-              borderRadius: '8px',
-              background: 'linear-gradient(135deg, #5845d9, #c6bfff)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              color: '#ffffff',
-            }}
-          >
-            <IconBrain size={20} color="#ffffff" />
+        {/* 3D Brand Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <div className="relative w-10 h-10 rounded-xl overflow-hidden hardware-border hardware-glow">
+            <Image
+              src="/logo_3d.jpg"
+              alt="DataMind 3D Logo"
+              fill
+              className="object-cover"
+            />
           </div>
-          <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.25rem', fontWeight: 700, letterSpacing: '-0.02em' }}>
-            DataMind
-          </span>
+          <div>
+            <span style={{ fontFamily: 'var(--font-display)', fontSize: '1.35rem', fontWeight: 800, letterSpacing: '-0.02em', color: '#ffffff' }}>
+              DataMind
+            </span>
+            <span className="block font-code text-[10px] text-primary uppercase font-bold tracking-widest">
+              AI ANALYTICS ENGINE
+            </span>
+          </div>
         </div>
 
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }}>
+        <div style={{ display: 'flex', gap: '1.25rem', alignItems: 'center' }}>
           <button
             onClick={onLogin}
             style={{
@@ -54,125 +54,141 @@ export const LandingPage: React.FC<LandingPageProps> = ({ onTryDataMind, onLogin
               color: '#94a3b8',
               cursor: 'pointer',
               fontWeight: 600,
-              fontSize: '0.85rem',
+              fontSize: '0.9rem',
             }}
           >
-            Log In
+            Sign In
           </button>
-          <button className="btn-primary" onClick={onTryDataMind}>
-            Launch App →
+          <button className="btn-primary cursor-pointer" onClick={onTryDataMind}>
+            Launch Application →
           </button>
         </div>
       </header>
 
       {/* Main Hero Section */}
-      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '5rem 2rem', maxWidth: '1200px', margin: '0 auto', width: '100%' }}>
+      <main style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '4rem 2rem', maxWidth: '1280px', margin: '0 auto', width: '100%' }}>
         {/* Badge Pill */}
         <div
           className="badge-pill badge-purple"
-          style={{ padding: '0.4rem 1rem', fontSize: '0.8rem', marginBottom: '2rem' }}
+          style={{ padding: '0.5rem 1.25rem', fontSize: '0.85rem', marginBottom: '2rem' }}
         >
-          <IconBrain size={14} color="var(--accent-light)" />
-          <span>Local-First AI Engine 2.0</span>
+          <span className="material-symbols-outlined text-primary text-[18px]">psychology</span>
+          <span>Next.js 16 • Local-First 3D AI Data Engine</span>
         </div>
 
         {/* Hero Title */}
         <h1
           style={{
             fontFamily: 'var(--font-display)',
-            fontSize: '3.5rem',
+            fontSize: '3.75rem',
             fontWeight: 800,
             textAlign: 'center',
-            lineHeight: '1.15',
+            lineHeight: '1.12',
             letterSpacing: '-0.03em',
             marginBottom: '1.5rem',
-            maxWidth: '900px',
+            maxWidth: '960px',
           }}
         >
           Understand your data. <br />
-          <span style={{ color: '#6F7784' }}>Without writing the query.</span>
+          <span className="bg-gradient-to-r from-primary via-inverse-primary to-accent-cyan bg-clip-text text-transparent">
+            Without writing a single query.
+          </span>
         </h1>
 
         {/* Subtitle */}
         <p
           style={{
             color: '#94a3b8',
-            fontSize: '1.15rem',
+            fontSize: '1.2rem',
             textAlign: 'center',
-            maxWidth: '680px',
-            lineHeight: '1.6',
-            marginBottom: '2.5rem',
+            maxWidth: '720px',
+            lineHeight: '1.65',
+            marginBottom: '3rem',
           }}
         >
-          A high-performance analytical instrument that turns natural language into complex data queries, executing entirely on your local machine.
+          A high-performance analytical instrument that turns plain-English questions into AST-validated SQL, executing entirely on your local machine with 100% privacy.
         </p>
 
         {/* Action CTA Buttons */}
-        <div style={{ display: 'flex', gap: '1rem', marginBottom: '4rem' }}>
+        <div style={{ display: 'flex', gap: '1.25rem', marginBottom: '4.5rem' }}>
           <button
-            className="btn-primary"
-            style={{ padding: '0.85rem 2rem', fontSize: '1rem', borderRadius: '8px' }}
+            className="btn-primary cursor-pointer"
+            style={{ padding: '0.95rem 2.25rem', fontSize: '1.05rem', borderRadius: '8px' }}
             onClick={onTryDataMind}
           >
-            Try DataMind Free →
+            Launch DataMind Workspace →
           </button>
           <button
-            className="btn-secondary"
-            style={{ padding: '0.85rem 2rem', fontSize: '1rem', borderRadius: '8px' }}
+            className="btn-secondary cursor-pointer"
+            style={{ padding: '0.95rem 2.25rem', fontSize: '1.05rem', borderRadius: '8px' }}
             onClick={onTryDataMind}
           >
+            <span className="material-symbols-outlined text-[20px]">play_circle</span>
             View Interactive Demo
           </button>
         </div>
 
-        {/* Hardware Preview Card (Matching Stitch Design) */}
+        {/* 3D Render Showcase Frame */}
         <div
-          className="glass-panel"
+          className="glass-panel hardware-glow"
           style={{
             width: '100%',
-            maxWidth: '1000px',
-            borderRadius: '12px',
-            border: '1px solid #1A1D21',
+            maxWidth: '1100px',
+            borderRadius: '16px',
+            border: '1px solid var(--border-glow)',
             overflow: 'hidden',
-            boxShadow: '0 0 50px rgba(124, 108, 255, 0.15)',
+            boxShadow: '0 0 60px rgba(140, 128, 255, 0.25)',
+            position: 'relative',
           }}
         >
-          {/* Frame Header */}
-          <div style={{ height: '40px', background: '#111418', borderBottom: '1px solid #1A1D21', display: 'flex', alignItems: 'center', padding: '0 1rem', gap: '0.5rem' }}>
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#343B46' }} />
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#343B46' }} />
-            <div style={{ width: '10px', height: '10px', borderRadius: '50%', background: '#343B46' }} />
-            <span style={{ marginLeft: '1rem', fontFamily: 'var(--font-mono)', fontSize: '0.75rem', color: '#6F7784' }}>
-              analyst_session_782
+          {/* Frame Header Bar */}
+          <div style={{ height: '44px', background: '#111418', borderBottom: '1px solid #1A1D21', display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '0 1.25rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem' }}>
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#F26D78' }} />
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffb875' }} />
+              <div style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#32C48D' }} />
+              <span style={{ marginLeft: '1rem', fontFamily: 'var(--font-mono)', fontSize: '0.8rem', color: '#6F7784' }}>
+                datamind_3d_analytics_terminal.render
+              </span>
+            </div>
+            <span className="badge-pill badge-emerald text-[10px]">
+              3D HARDWARE ACCELERATED
             </span>
           </div>
 
-          {/* Frame Body */}
-          <div style={{ padding: '2rem', background: '#0B0D10', display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            <div className="glass-panel" style={{ padding: '1.25rem', borderLeft: '4px solid var(--accent-primary)' }}>
-              <div style={{ display: 'flex', gap: '0.5rem', marginBottom: '0.5rem' }}>
-                <span className="badge-pill badge-purple">INTENT: AGGREGATION</span>
-                <span className="badge-pill badge-emerald">✓ VALIDATION: PASSED</span>
-              </div>
-              <h3 style={{ fontSize: '1.1rem', color: '#F5F7FA', marginBottom: '0.35rem' }}>
-                Q: "Why did revenue decline in Q2?"
-              </h3>
-              <p style={{ color: '#94a3b8', fontSize: '0.9rem' }} className="flex items-center gap-1">
-                <span className="material-symbols-outlined text-primary text-[16px]">lightbulb</span>
-                <span>DataMind identified West region hardware sales drop as primary factor.</span>
-              </p>
-            </div>
+          {/* 3D Render Image Container */}
+          <div className="relative w-full aspect-video min-h-[460px] bg-[#0B0D10]">
+            <Image
+              src="/hero_3d.jpg"
+              alt="DataMind 3D Rendered Dashboard Preview"
+              fill
+              className="object-cover"
+              priority
+            />
 
-            <div style={{ background: '#080A0C', padding: '1rem', borderRadius: '8px', border: '1px solid #1A1D21', fontFamily: 'var(--font-mono)', fontSize: '0.85rem', color: '#c6bfff' }}>
-              SELECT region, SUM(revenue) AS total_revenue FROM dataset GROUP BY region ORDER BY total_revenue DESC
+            {/* Floating Glass Overlay Cards */}
+            <div className="absolute bottom-6 left-6 right-6 p-6 glass-panel border border-outline-variant rounded-xl flex flex-col md:flex-row justify-between items-center gap-4">
+              <div className="flex items-center gap-4">
+                <div className="w-12 h-12 rounded-xl bg-primary/20 border border-primary/40 flex items-center justify-center text-primary">
+                  <span className="material-symbols-outlined text-2xl">verified_user</span>
+                </div>
+                <div>
+                  <h4 className="font-display font-bold text-on-surface text-base">Deterministic AST Execution</h4>
+                  <p className="font-body text-xs text-on-surface-variant">DuckDB Read-Only AST validation prevents DDL/DML mutation risks</p>
+                </div>
+              </div>
+
+              <button className="btn-primary text-sm cursor-pointer whitespace-nowrap" onClick={onTryDataMind}>
+                Explore Terminal →
+              </button>
             </div>
           </div>
         </div>
       </main>
 
       {/* Footer */}
-      <footer style={{ borderTop: '1px solid #1A1D21', padding: '2rem', textAlign: 'center', color: '#6F7784', fontSize: '0.85rem' }}>
-        &copy; 2026 DataMind AI Systems. Local-First Analytical Instrument.
+      <footer style={{ borderTop: '1px solid #1A1D21', padding: '2.5rem', textAlign: 'center', color: '#6F7784', fontSize: '0.85rem' }}>
+        &copy; 2026 DataMind AI Systems. Local-First 3D Analytical Instrument.
       </footer>
     </div>
   );

@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { IconBrain, IconShield } from '@/components/ui/Icons';
+import Image from 'next/image';
+import { IconShield } from '@/components/ui/Icons';
 
 interface LoginPageProps {
   onSuccess: () => void;
@@ -34,8 +35,13 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onBackToLanding
       {/* Login / Sign Up Card */}
       <div className="glass-panel" style={{ width: '100%', maxWidth: '440px', padding: '2.5rem 2rem', border: '1px solid #252A32', boxShadow: '0 0 40px rgba(198, 191, 255, 0.05)' }}>
         <div style={{ textAlign: 'center', marginBottom: '1.75rem' }}>
-          <div style={{ width: '40px', height: '40px', borderRadius: '10px', background: 'linear-gradient(135deg, #5845d9, #c6bfff)', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1rem auto' }}>
-            <IconBrain size={24} color="#ffffff" />
+          <div className="relative w-12 h-12 rounded-xl overflow-hidden hardware-border hardware-glow mx-auto mb-3">
+            <Image
+              src="/logo_3d.jpg"
+              alt="DataMind 3D Logo"
+              fill
+              className="object-cover"
+            />
           </div>
           <h2 style={{ fontFamily: 'var(--font-display)', fontSize: '1.5rem', fontWeight: 700, marginBottom: '0.35rem' }}>
             {isSignUp ? 'Create your workspace' : 'Welcome back'}
@@ -81,7 +87,7 @@ export const LoginPage: React.FC<LoginPageProps> = ({ onSuccess, onBackToLanding
             />
           </div>
 
-          <button className="btn-primary" type="submit" style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+          <button className="btn-primary cursor-pointer" type="submit" style={{ width: '100%', justifyContent: 'center', padding: '0.75rem', fontSize: '0.9rem', marginTop: '0.5rem' }}>
             {isSignUp ? 'Create Account →' : 'Sign In →'}
           </button>
         </form>
