@@ -3,6 +3,7 @@ import { ProjectModal } from './components/ProjectModal';
 import { DatasetUpload } from './components/DatasetUpload';
 import { DatasetPreview } from './components/DatasetPreview';
 import { DatasetProfileView } from './components/DatasetProfile';
+import { SQLConsole } from './components/SQLConsole';
 
 interface Project {
   id: string;
@@ -32,7 +33,7 @@ export default function App() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'preview' | 'profile'>('profile');
+  const [activeTab, setActiveTab] = useState<'profile' | 'preview' | 'sql'>('profile');
   
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
@@ -120,7 +121,7 @@ export default function App() {
           <div className="brand-logo">DM</div>
           <div>
             <span className="brand-title">DataMind</span>
-            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 2</span>
+            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 3</span>
           </div>
         </div>
 
@@ -220,7 +221,7 @@ export default function App() {
                 {/* View Tabs */}
                 {selectedDataset && (
                   <div style={{ marginTop: '2rem' }}>
-                    <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem', flexWrap: 'wrap' }}>
                       <button
                         className={`btn ${activeTab === 'profile' ? 'btn-primary' : 'btn-secondary'}`}
                         onClick={() => setActiveTab('profile')}
@@ -235,12 +236,21 @@ export default function App() {
                       >
                         🔍 Row Data Preview
                       </button>
+                      <button
+                        className={`btn ${activeTab === 'sql' ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => setActiveTab('sql')}
+                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
+                      >
+                        ⚡ DuckDB SQL Console
+                      </button>
                     </div>
 
                     {activeTab === 'profile' ? (
                       <DatasetProfileView datasetId={selectedDataset.id} />
-                    ) : (
+                    ) : activeTab === 'preview' ? (
                       <DatasetPreview dataset={selectedDataset} previewData={previewData} loading={loadingPreview} />
+                    ) : (
+                      <SQLConsole datasetId={selectedDataset.id} datasetName={selectedDataset.name} />
                     )}
                   </div>
                 )}
@@ -269,7 +279,7 @@ export default function App() {
 
       {/* Footer */}
       <footer>
-        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 2 — Deterministic Dataset Intelligence & Profiling Engine.</p>
+        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 3 — DuckDB Deterministic Analytics Engine.</p>
       </footer>
     </div>
   );
