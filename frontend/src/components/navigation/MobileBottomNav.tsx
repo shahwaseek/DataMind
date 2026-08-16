@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface MobileBottomNavProps {
-  activeTab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'settings';
-  setActiveTab: (tab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'settings') => void;
+  activeTab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'evaluation' | 'settings';
+  setActiveTab: (tab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'evaluation' | 'settings') => void;
 }
 
 export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, setActiveTab }) => {
@@ -12,6 +12,7 @@ export const MobileBottomNav: React.FC<MobileBottomNavProps> = ({ activeTab, set
     { id: 'analyst', label: 'Ask', icon: 'psychology' },
     { id: 'insights', label: 'Insights', icon: 'lightbulb' },
     { id: 'reports', label: 'Reports', icon: 'description' },
+    { id: 'evaluation', label: 'Eval', icon: 'quiz' },
   ] as const;
 
   return (

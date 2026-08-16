@@ -9,6 +9,7 @@ import { DatasetExplorer } from './components/datasets/DatasetExplorer';
 import { AnalystWorkspace } from './components/analyst/AnalystWorkspace';
 import { InsightsView } from './components/insights/InsightsView';
 import { ReportsView } from './components/reports/ReportsView';
+import { EvaluationView } from './components/evaluation/EvaluationView';
 import { SettingsView } from './components/settings/SettingsView';
 import { ProjectModal } from './components/ProjectModal';
 import { LegalModal } from './components/LegalModal';
@@ -42,7 +43,7 @@ export default function App() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   
-  const [activeTab, setActiveTab] = useState<'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'settings'>('analyst');
+  const [activeTab, setActiveTab] = useState<'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'evaluation' | 'settings'>('analyst');
   
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
@@ -114,7 +115,7 @@ export default function App() {
   }
 
   return (
-    <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', background: 'var(--bg-dark)' }}>
+    <div className="flex h-screen w-screen overflow-hidden bg-background">
       {/* Left Sidebar Navigation (240px Desktop) */}
       <Sidebar
         activeTab={activeTab}
@@ -176,9 +177,9 @@ export default function App() {
                   datasetName={selectedDataset.name}
                 />
               ) : (
-                <div className="glass-panel" style={{ padding: '3rem', textAlign: 'center' }}>
-                  <h3 style={{ color: 'var(--text-primary)', marginBottom: '0.75rem' }}>Upload a Dataset to Begin</h3>
-                  <p style={{ color: 'var(--text-secondary)', marginBottom: '1.5rem' }}>
+                <div className="bg-surface-container border border-outline-variant p-10 rounded-lg text-center max-w-lg mx-auto">
+                  <h3 className="text-on-surface text-xl font-bold mb-2">Upload a Dataset to Begin</h3>
+                  <p className="text-on-surface-variant text-sm mb-6 leading-relaxed">
                     Select or upload a CSV, XLSX, JSON, or Parquet dataset to activate AI query analysis.
                   </p>
                   <button className="btn-primary" onClick={() => setActiveTab('datasets')}>
@@ -190,18 +191,18 @@ export default function App() {
               <InsightsView datasetName={selectedDataset ? selectedDataset.name : 'Workspace'} />
             ) : activeTab === 'reports' ? (
               <ReportsView projectId={selectedProjectId} />
+            ) : activeTab === 'evaluation' ? (
+              <EvaluationView />
             ) : (
               <SettingsView />
             )
           ) : (
-            <div className="glass-panel" style={{ padding: '4rem 2rem', textAlign: 'center', maxWidth: '600px', margin: '2rem auto' }}>
-              <h3 style={{ color: 'var(--text-primary)', marginBottom: '1rem', fontSize: '1.4rem' }}>
-                Welcome to DataMind
-              </h3>
-              <p style={{ color: 'var(--text-secondary)', marginBottom: '1.75rem', lineHeight: '1.6' }}>
+            <div className="bg-surface-container border border-outline-variant p-12 rounded-lg text-center max-w-md mx-auto my-12">
+              <h3 className="text-on-surface text-xl font-bold mb-2">Welcome to DataMind</h3>
+              <p className="text-on-surface-variant text-sm mb-6 leading-relaxed">
                 Create your first analytical workspace to upload datasets and begin evidence-backed AI analysis.
               </p>
-              <button className="btn-primary" style={{ padding: '0.75rem 1.5rem', fontSize: '1rem' }} onClick={() => setIsProjectModalOpen(true)}>
+              <button className="btn-primary w-full justify-center" onClick={() => setIsProjectModalOpen(true)}>
                 + Create First Workspace Project
               </button>
             </div>
@@ -214,21 +215,21 @@ export default function App() {
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
               onClick={() => setViewMode('landing')}
-              style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.8rem' }}
+              style={{ background: 'none', border: 'none', color: '#c6bfff', cursor: 'pointer', fontSize: '0.8rem' }}
             >
               Landing Page
             </button>
             <span>•</span>
             <button
               onClick={() => setLegalModalType('privacy')}
-              style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.8rem' }}
+              style={{ background: 'none', border: 'none', color: '#c6bfff', cursor: 'pointer', fontSize: '0.8rem' }}
             >
               Privacy Policy
             </button>
             <span>•</span>
             <button
               onClick={() => setLegalModalType('terms')}
-              style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.8rem' }}
+              style={{ background: 'none', border: 'none', color: '#c6bfff', cursor: 'pointer', fontSize: '0.8rem' }}
             >
               Terms & Conditions
             </button>

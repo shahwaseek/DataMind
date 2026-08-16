@@ -1,8 +1,8 @@
 import React from 'react';
 
 interface SidebarProps {
-  activeTab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'settings';
-  setActiveTab: (tab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'settings') => void;
+  activeTab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'evaluation' | 'settings';
+  setActiveTab: (tab: 'overview' | 'datasets' | 'analyst' | 'insights' | 'reports' | 'evaluation' | 'settings') => void;
   onNewProject: () => void;
 }
 
@@ -13,10 +13,11 @@ export const Sidebar: React.FC<SidebarProps> = ({ activeTab, setActiveTab, onNew
     { id: 'analyst', label: 'Analyst', icon: 'analytics' },
     { id: 'insights', label: 'Insights', icon: 'lightbulb' },
     { id: 'reports', label: 'Reports', icon: 'description' },
+    { id: 'evaluation', label: 'Evaluation', icon: 'quiz' },
   ] as const;
 
   return (
-    <nav className="fixed left-0 top-0 h-screen w-[240px] bg-surface-container border-r border-outline-variant z-20 flex flex-col py-6 transition-colors duration-200 ease-in-out">
+    <nav className="fixed left-0 top-0 h-full w-[240px] bg-surface-container border-r border-outline-variant z-20 flex flex-col py-6 transition-colors duration-200 ease-in-out">
       {/* Brand Header */}
       <div className="px-6 mb-6 flex items-center gap-3">
         <div className="w-8 h-8 rounded bg-primary-container flex items-center justify-center text-on-primary-container">
