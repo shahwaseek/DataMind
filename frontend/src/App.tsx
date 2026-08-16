@@ -5,6 +5,7 @@ import { DatasetPreview } from './components/DatasetPreview';
 import { DatasetProfileView } from './components/DatasetProfile';
 import { SQLConsole } from './components/SQLConsole';
 import { AnalystChat } from './components/AnalystChat';
+import { ChartViewer } from './components/ChartViewer';
 
 interface Project {
   id: string;
@@ -34,7 +35,7 @@ export default function App() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
-  const [activeTab, setActiveTab] = useState<'chat' | 'profile' | 'preview' | 'sql'>('chat');
+  const [activeTab, setActiveTab] = useState<'chat' | 'profile' | 'preview' | 'sql' | 'chart'>('chat');
   
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
@@ -122,7 +123,7 @@ export default function App() {
           <div className="brand-logo">DM</div>
           <div>
             <span className="brand-title">DataMind</span>
-            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 4 & 5</span>
+            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 6 & 7</span>
           </div>
         </div>
 
@@ -137,7 +138,7 @@ export default function App() {
               {loadingBackend
                 ? 'Connecting...'
                 : backendHealthy
-                ? 'Backend & Ollama Ready'
+                ? 'Backend Ready'
                 : 'Backend Disconnected'}
             </span>
           </div>
@@ -231,6 +232,13 @@ export default function App() {
                         💬 AI Analyst Chat
                       </button>
                       <button
+                        className={`btn ${activeTab === 'chart' ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => setActiveTab('chart')}
+                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
+                      >
+                        📈 Visualizations
+                      </button>
+                      <button
                         className={`btn ${activeTab === 'profile' ? 'btn-primary' : 'btn-secondary'}`}
                         onClick={() => setActiveTab('profile')}
                         style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
@@ -255,6 +263,8 @@ export default function App() {
 
                     {activeTab === 'chat' ? (
                       <AnalystChat projectId={selectedProjectId} datasetId={selectedDataset.id} datasetName={selectedDataset.name} />
+                    ) : activeTab === 'chart' ? (
+                      <ChartViewer datasetId={selectedDataset.id} datasetName={selectedDataset.name} />
                     ) : activeTab === 'profile' ? (
                       <DatasetProfileView datasetId={selectedDataset.id} />
                     ) : activeTab === 'preview' ? (
@@ -289,7 +299,7 @@ export default function App() {
 
       {/* Footer */}
       <footer>
-        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 4 & 5 — Analyst API & Local LLM Integration Verified.</p>
+        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 6 & 7 — Benchmark Suite & Visualization Engine Verified.</p>
       </footer>
     </div>
   );
