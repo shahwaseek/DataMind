@@ -6,6 +6,7 @@ import { DatasetProfileView } from './components/DatasetProfile';
 import { SQLConsole } from './components/SQLConsole';
 import { AnalystChat } from './components/AnalystChat';
 import { ChartViewer } from './components/ChartViewer';
+import { LegalModal } from './components/LegalModal';
 
 interface Project {
   id: string;
@@ -41,6 +42,8 @@ export default function App() {
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [loadingPreview, setLoadingPreview] = useState<boolean>(false);
+  
+  const [legalModalType, setLegalModalType] = useState<'privacy' | 'terms' | null>(null);
 
   const fetchProjects = useCallback(async () => {
     try {
@@ -123,7 +126,7 @@ export default function App() {
           <div className="brand-logo">DM</div>
           <div>
             <span className="brand-title">DataMind</span>
-            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 6 & 7</span>
+            <span className="brand-badge" style={{ marginLeft: '8px' }}>Local AI</span>
           </div>
         </div>
 
@@ -138,7 +141,7 @@ export default function App() {
               {loadingBackend
                 ? 'Connecting...'
                 : backendHealthy
-                ? 'Backend Ready'
+                ? 'Backend & Ollama Ready'
                 : 'Backend Disconnected'}
             </span>
           </div>
@@ -297,9 +300,31 @@ export default function App() {
         onProjectCreated={handleProjectCreated}
       />
 
-      {/* Footer */}
+      {/* Legal Policy Modal */}
+      <LegalModal
+        isOpen={legalModalType !== null}
+        type={legalModalType}
+        onClose={() => setLegalModalType(null)}
+      />
+
+      {/* Footer with Legal Links */}
       <footer>
-        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 6 & 7 — Benchmark Suite & Visualization Engine Verified.</p>
+        <div style={{ display: 'flex', justifyContent: 'center', gap: '1.5rem', marginBottom: '0.5rem' }}>
+          <button
+            onClick={() => setLegalModalType('privacy')}
+            style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.85rem' }}
+          >
+            Privacy Policy
+          </button>
+          <span style={{ color: 'var(--text-muted)' }}>•</span>
+          <button
+            onClick={() => setLegalModalType('terms')}
+            style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.85rem' }}
+          >
+            Terms & Conditions
+          </button>
+        </div>
+        <p>DataMind Local AI Data Analyst &copy; 2026. Local-First & Verifiable Evidence Engine.</p>
       </footer>
     </div>
   );
