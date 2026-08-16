@@ -236,15 +236,35 @@ body {
   background: var(--surface-hover);
 }
 
-/* Modal Backdrop */
-.modal-backdrop {
-  position: fixed;
-  inset: 0;
-  background: rgba(7, 15, 25, 0.85);
-  backdrop-filter: blur(10px);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 1rem;
+/* Responsive Mobile vs Desktop View (Matching Stitch Design) */
+@media (max-width: 768px) {
+  :root {
+    --sidebar-width: 0px;
+    --header-height: 56px;
+  }
+
+  aside {
+    display: none !important;
+  }
+
+  header {
+    width: 100% !important;
+  }
+
+  main {
+    margin-left: 0 !important;
+    width: 100vw !important;
+    padding: 1rem !important;
+    padding-bottom: 75px !important;
+  }
+
+  .mobile-only-nav {
+    display: flex !important;
+  }
+}
+
+@media (min-width: 769px) {
+  .mobile-only-nav {
+    display: none !important;
+  }
 }

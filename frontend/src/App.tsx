@@ -1,6 +1,9 @@
 import { useState, useEffect, useCallback } from 'react';
+import { LandingPage } from './components/pages/LandingPage';
+import { LoginPage } from './components/pages/LoginPage';
 import { Sidebar } from './components/navigation/Sidebar';
 import { Header } from './components/navigation/Header';
+import { MobileBottomNav } from './components/navigation/MobileBottomNav';
 import { OverviewDashboard } from './components/overview/OverviewDashboard';
 import { DatasetExplorer } from './components/datasets/DatasetExplorer';
 import { AnalystWorkspace } from './components/analyst/AnalystWorkspace';
@@ -33,6 +36,7 @@ interface Dataset {
 }
 
 export default function App() {
+  const [viewMode, setViewMode] = useState<'app' | 'landing' | 'login'>('app');
   const [projects, setProjects] = useState<Project[]>([]);
   const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const [datasets, setDatasets] = useState<Dataset[]>([]);
@@ -101,9 +105,17 @@ export default function App() {
     fetchProjects();
   };
 
+  if (viewMode === 'landing') {
+    return <LandingPage onTryDataMind={() => setViewMode('app')} onLogin={() => setViewMode('login')} />;
+  }
+
+  if (viewMode === 'login') {
+    return <LoginPage onSuccess={() => setViewMode('app')} onBackToLanding={() => setViewMode('landing')} />;
+  }
+
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', overflow: 'hidden', background: 'var(--bg-dark)' }}>
-      {/* Left Sidebar Navigation (240px) */}
+      {/* Left Sidebar Navigation (240px Desktop) */}
       <Sidebar
         activeTab={activeTab}
         setActiveTab={setActiveTab}
@@ -138,7 +150,7 @@ export default function App() {
         {/* Ambient Grid Pattern */}
         <div className="bg-ambient-pattern" />
 
-        {/* Content View Routing */}
+        {/* View Routing */}
         <div style={{ position: 'relative', zIndex: 1, flex: 1 }}>
           {selectedProjectId ? (
             activeTab === 'overview' ? (
@@ -201,6 +213,13 @@ export default function App() {
           <div>DataMind Local AI Data Analyst &copy; 2026. Impeccable Design & Evidence Engine.</div>
           <div style={{ display: 'flex', gap: '1rem' }}>
             <button
+              onClick={() => setViewMode('landing')}
+              style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.8rem' }}
+            >
+              Landing Page
+            </button>
+            <span>•</span>
+            <button
               onClick={() => setLegalModalType('privacy')}
               style={{ background: 'none', border: 'none', color: 'var(--accent-cyan)', cursor: 'pointer', fontSize: '0.8rem' }}
             >
@@ -216,6 +235,9 @@ export default function App() {
           </div>
         </footer>
       </main>
+
+      {/* Mobile Phone View Bottom Navigation (Hidden on Desktop) */}
+      <MobileBottomNav activeTab={activeTab} setActiveTab={setActiveTab} />
 
       {/* New Project Modal */}
       <ProjectModal
