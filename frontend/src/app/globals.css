@@ -3,25 +3,24 @@
 
 :root {
   --bg-dark: #080A0C;
-  --bg-darker: #070f19;
+  --bg-darker: #06080A;
   --surface-base: #0B0D10;
   --surface-raised: #111418;
-  --surface-container: #18202b;
-  --surface-elevated: #232a36;
-  --surface-hover: #2d3541;
+  --surface-container: #18202B;
+  --surface-container-high: #232A36;
+  --surface-hover: #2D3541;
 
   --border-subtle: #1A1D21;
   --border-strong: #343B46;
-  --border-glow: #c6bfff;
+  --border-glow: rgba(198, 191, 255, 0.25);
 
-  --accent-primary: #c6bfff;
-  --accent-light: #e4dfff;
-  --accent-indigo: #5845d9;
-  --accent-purple: #8c80ff;
+  --primary: #c6bfff;
+  --on-primary: #2800a0;
+  --primary-fixed: #e4dfff;
   --accent-cyan: #06b6d4;
   --accent-emerald: #32C48D;
   --accent-warning: #ffb875;
-  --accent-danger: #F26D78;
+  --danger: #F26D78;
 
   --text-primary: #F5F7FA;
   --text-secondary: #c8c4d7;
@@ -48,6 +47,7 @@ body {
   min-height: 100vh;
   overflow-x: hidden;
   -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Material Symbols Outlined Icon Helper */
@@ -68,7 +68,7 @@ body {
 
 /* Stitch Hardware Design Utilities */
 .hardware-glow {
-  box-shadow: 0 0 16px rgba(124, 108, 255, 0.2);
+  box-shadow: 0 0 20px rgba(198, 191, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.1);
 }
 
 .hardware-border {
@@ -77,37 +77,37 @@ body {
 
 .hardware-border-active {
   border: 1px solid #c6bfff;
-  box-shadow: 0 0 8px rgba(198, 191, 255, 0.3);
+  box-shadow: 0 0 12px rgba(198, 191, 255, 0.35);
 }
 
 /* Ambient Grid Pattern */
 .bg-ambient-pattern {
   position: absolute;
   inset: 0;
-  background-image: radial-gradient(rgba(255, 255, 255, 0.08) 1px, transparent 1px);
+  background-image: radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px);
   background-size: 24px 24px;
   pointer-events: none;
-  opacity: 0.5;
+  opacity: 0.6;
 }
 
-/* Glassmorphism Cards */
+/* Glassmorphism Panels (UI/UX Pro Max Standard) */
 .glass-panel {
   background: rgba(24, 32, 43, 0.75);
-  backdrop-filter: blur(20px) saturate(180%);
-  -webkit-backdrop-filter: blur(20px) saturate(180%);
-  border: 1px solid #1A1D21;
-  border-radius: 10px;
-  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.7);
+  backdrop-filter: blur(24px) saturate(190%);
+  -webkit-backdrop-filter: blur(24px) saturate(190%);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 12px;
+  box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.1);
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 .glass-panel-hover:hover {
-  border-color: #c6bfff;
-  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.8), 0 0 25px rgba(198, 191, 255, 0.25);
+  border-color: rgba(198, 191, 255, 0.4);
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.9), 0 0 30px rgba(198, 191, 255, 0.25);
   transform: translateY(-2px);
 }
 
-/* Shimmer Animation */
+/* Shimmer Loading Animation */
 .shimmer {
   position: relative;
   overflow: hidden;
@@ -138,24 +138,24 @@ body {
   background: #080A0C;
 }
 ::-webkit-scrollbar-thumb {
-  background: #2d3541;
+  background: #232A36;
   border-radius: 4px;
 }
 ::-webkit-scrollbar-thumb:hover {
   background: #c6bfff;
 }
 
-/* Buttons */
+/* Primary Button with Micro-Interaction */
 .btn-primary {
   background: #c6bfff;
   color: #2800a0;
   font-weight: 600;
   border: none;
-  border-radius: 6px;
-  padding: 0.6rem 1.25rem;
+  border-radius: 8px;
+  padding: 0.65rem 1.35rem;
   font-size: 0.88rem;
   cursor: pointer;
-  box-shadow: 0 0 16px rgba(198, 191, 255, 0.3);
+  box-shadow: 0 0 20px rgba(198, 191, 255, 0.35);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
@@ -165,7 +165,7 @@ body {
 .btn-primary:hover {
   background: #e4dfff;
   transform: translateY(-1px);
-  box-shadow: 0 0 24px rgba(198, 191, 255, 0.5);
+  box-shadow: 0 0 28px rgba(198, 191, 255, 0.55);
 }
 
 .btn-primary:active {
@@ -173,11 +173,11 @@ body {
 }
 
 .btn-secondary {
-  background: #18202b;
+  background: #18202B;
   color: #F5F7FA;
-  border: 1px solid #1A1D21;
-  border-radius: 6px;
-  padding: 0.55rem 1rem;
+  border: 1px solid #343B46;
+  border-radius: 8px;
+  padding: 0.6rem 1.15rem;
   font-size: 0.85rem;
   font-weight: 500;
   cursor: pointer;
@@ -188,19 +188,23 @@ body {
 }
 
 .btn-secondary:hover {
-  background: #2d3541;
-  border-color: #343B46;
+  background: #232A36;
+  border-color: #c6bfff;
   color: #ffffff;
+}
+
+.btn-secondary:active {
+  transform: scale(0.98);
 }
 
 /* Form Inputs */
 .form-input {
   width: 100%;
   background: #0B0D10;
-  border: 1px solid #1A1D21;
+  border: 1px solid #343B46;
   color: #F5F7FA;
-  padding: 0.65rem 1rem;
-  border-radius: 6px;
+  padding: 0.7rem 1.1rem;
+  border-radius: 8px;
   font-size: 0.9rem;
   font-family: var(--font-body);
   outline: none;
@@ -209,7 +213,7 @@ body {
 
 .form-input:focus {
   border-color: #c6bfff;
-  box-shadow: 0 0 12px rgba(198, 191, 255, 0.25);
+  box-shadow: 0 0 16px rgba(198, 191, 255, 0.3);
 }
 
 /* Badges */
@@ -217,12 +221,12 @@ body {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.25rem 0.75rem;
+  padding: 0.3rem 0.85rem;
   border-radius: 9999px;
   font-size: 0.75rem;
   font-weight: 600;
-  background: #18202b;
-  border: 1px solid #1A1D21;
+  background: #18202B;
+  border: 1px solid #343B46;
   color: #c8c4d7;
 }
 
@@ -256,7 +260,7 @@ body {
   background: #111418;
   color: #c8c4d7;
   font-weight: 600;
-  padding: 0.75rem 1rem;
+  padding: 0.85rem 1.1rem;
   border-bottom: 1px solid #343B46;
   position: sticky;
   top: 0;
@@ -264,13 +268,13 @@ body {
 }
 
 .data-table td {
-  padding: 0.65rem 1rem;
+  padding: 0.75rem 1.1rem;
   border-bottom: 1px solid #1A1D21;
   color: #F5F7FA;
 }
 
 .data-table tr:hover td {
-  background: #2d3541;
+  background: #232A36;
 }
 
 /* Modal Backdrop */
@@ -278,7 +282,7 @@ body {
   position: fixed;
   inset: 0;
   background: rgba(8, 10, 12, 0.85);
-  backdrop-filter: blur(12px);
+  backdrop-filter: blur(16px);
   z-index: 100;
   display: flex;
   align-items: center;
@@ -286,7 +290,7 @@ body {
   padding: 1rem;
 }
 
-/* Responsive Mobile vs Desktop View (Matching Stitch Design) */
+/* Responsive Mobile Navigation */
 @media (max-width: 768px) {
   :root {
     --sidebar-width: 0px;
@@ -305,7 +309,7 @@ body {
     margin-left: 0 !important;
     width: 100vw !important;
     padding: 1rem !important;
-    padding-bottom: 75px !important;
+    padding-bottom: 80px !important;
   }
 
   .mobile-only-nav {
