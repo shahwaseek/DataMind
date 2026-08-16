@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { ProjectModal } from './components/ProjectModal';
 import { DatasetUpload } from './components/DatasetUpload';
 import { DatasetPreview } from './components/DatasetPreview';
+import { DatasetProfileView } from './components/DatasetProfile';
 
 interface Project {
   id: string;
@@ -31,6 +32,7 @@ export default function App() {
   const [datasets, setDatasets] = useState<Dataset[]>([]);
   const [selectedDataset, setSelectedDataset] = useState<Dataset | null>(null);
   const [previewData, setPreviewData] = useState<any>(null);
+  const [activeTab, setActiveTab] = useState<'preview' | 'profile'>('profile');
   
   const [loadingBackend, setLoadingBackend] = useState<boolean>(true);
   const [backendHealthy, setBackendHealthy] = useState<boolean>(false);
@@ -118,7 +120,7 @@ export default function App() {
           <div className="brand-logo">DM</div>
           <div>
             <span className="brand-title">DataMind</span>
-            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 1</span>
+            <span className="brand-badge" style={{ marginLeft: '8px' }}>Phase 2</span>
           </div>
         </div>
 
@@ -215,8 +217,33 @@ export default function App() {
                   ))}
                 </div>
 
-                {/* Dataset Preview Section */}
-                <DatasetPreview dataset={selectedDataset} previewData={previewData} loading={loadingPreview} />
+                {/* View Tabs */}
+                {selectedDataset && (
+                  <div style={{ marginTop: '2rem' }}>
+                    <div style={{ display: 'flex', gap: '1rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '0.5rem', marginBottom: '1rem' }}>
+                      <button
+                        className={`btn ${activeTab === 'profile' ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => setActiveTab('profile')}
+                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
+                      >
+                        📊 Quality Profile & Intelligence
+                      </button>
+                      <button
+                        className={`btn ${activeTab === 'preview' ? 'btn-primary' : 'btn-secondary'}`}
+                        onClick={() => setActiveTab('preview')}
+                        style={{ padding: '0.5rem 1.25rem', fontSize: '0.9rem' }}
+                      >
+                        🔍 Row Data Preview
+                      </button>
+                    </div>
+
+                    {activeTab === 'profile' ? (
+                      <DatasetProfileView datasetId={selectedDataset.id} />
+                    ) : (
+                      <DatasetPreview dataset={selectedDataset} previewData={previewData} loading={loadingPreview} />
+                    )}
+                  </div>
+                )}
               </div>
             )}
           </div>
@@ -242,7 +269,7 @@ export default function App() {
 
       {/* Footer */}
       <footer>
-        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 1 — Dataset Ingestion Engine Verified.</p>
+        <p>DataMind Local AI Data Analyst &copy; 2026. Phase 2 — Deterministic Dataset Intelligence & Profiling Engine.</p>
       </footer>
     </div>
   );

@@ -247,3 +247,26 @@ def get_dataset_preview(dataset_id: str):
         )
     finally:
         conn.close()
+
+
+@router.get("/datasets/{dataset_id}/profile")
+def get_dataset_profile(dataset_id: str):
+    from app.services.profiling import profile_dataset_file, IngestionError
+    conn = get_connection()
+    try:
+        row = conn.execute("SELECT storage_path FROM datasets WHERE id = ?", (dataset_id,)).fetchone()
+        if not row:
+            raise HTTPException(status_code=404, detail="Dataset not found")
+
+        file_path = Path(row["storage_path"])
+        if not file_path.exists():
+            raise HTTPException(status_code=404, detail="Dataset storage file not found on disk")
+
+        try:
+            profile_data = profile_dataset_file(file_path)
+            profile_data["dataset_id"] = dataset_id
+            return profile_data
+        except IngestionError as ie:
+            raise HTTPException(status_code=400, detail=str(ie))
+    finally:
+        conn.close()
